@@ -4,7 +4,7 @@ expertMode = true
 
 [nix]
 channel = "stable-25_05"
-packages = ["gitFull", "glibcLocales", "libxcrypt", "playwright-driver", "postgresql"]
+packages = ["fontconfig", "ghostscript", "gitFull", "glib", "glibcLocales", "harfbuzz", "libxcrypt", "pango", "playwright-driver", "postgresql"]
 
 [workflows]
 runButton = "Project"

@@ -1,0 +1,81 @@
+import asyncio, uuid
+from datetime import datetime
+import typer
+from .config import settings
+from .ingestion.fetch import fetch_html, fetch_rendered
+from .ingestion.parse import html_to_text
+from .llm.client import json_call
+from .models.claims import ClaimSet, ExtractedClaim
+from .adapters import nmls, fintrac, edgar, cfpb, bank_partners, trust_center, news
+from .reconcile.engine import reconcile
+from .notify.slack import post_slack
+from .notify.memo import render_html
+
+app = typer.Typer()
+
+CLAIMS_SCHEMA = {
+  "type":"object",
+  "properties":{
+    "claims":{"type":"array","items":{
+      "type":"object",
+      "properties":{
+        "id":{"type":"string"},
+        "category":{"type":"string","enum":["licensing","regulatory","partner_bank","security","compliance","marketing"]},
+        "claim_text":{"type":"string"},
+        "entity":{"type":"string"},
+        "jurisdiction":{"type":"string"},
+        "claim_kind":{"type":"string"},
+        "values":{"type":"array","items":{"type":"string"}},
+        "effective_date":{"type":"string"}
+      },
+      "required":["id","category","claim_text"]
+    }}
+  },
+  "required":["claims"]
+}
+
+@app.command()
+def verify(url: str, company: str, jurisdiction: str = "US", render_js: bool = False):
+    # CLI default: emit Slack if configured
+    asyncio.run(_verify(url, company, jurisdiction, render_js, emit_slack=True))
+
+async def _verify(url: str, company: str, jurisdiction: str, render_js: bool, emit_slack: bool = True):
+    html = await (fetch_rendered(url) if render_js else fetch_html(url))
+    text = html_to_text(html)
+    prompt = open("src/iva/llm/prompts/extract_claims.prompt").read() + f"\nURL: {url}\nCompany: {company}\nContent:\n{text[:12000]}"
+    raw = json_call(prompt, CLAIMS_SCHEMA)
+    claims = []
+    for c in raw.get("claims", []):
+        claims.append(ExtractedClaim(
+            id=c.get("id") or str(uuid.uuid4()),
+            category=c["category"],
+            claim_text=c["claim_text"],
+            entity=c.get("entity"),
+            jurisdiction=c.get("jurisdiction"),
+            claim_kind=c.get("claim_kind"),
+            values=c.get("values"),
+            effective_date=c.get("effective_date"),
+            citations=[]
+        ))
+    claimset = ClaimSet(url=url, company=company, extracted_at=datetime.utcnow(), claims=claims)
+
+    # Adapters
+    adapters = {
+        "nmls": await nmls.check_nmls(company),
+        "fintrac": await fintrac.check_fintrac(company),
+        "edgar": await edgar.check_edgar(company),
+        "cfpb": await cfpb.check_cfpb(company),
+        "bank_partners": await bank_partners.check_bank_partners(company),
+        "trust_center": await trust_center.check_trust_center(url),
+        "news": await news.search_press(company)
+    }
+
+    card = reconcile(claimset, adapters)
+    if emit_slack:
+        await post_slack(card)
+    memo_html = render_html(card)
+    print("\n=== Memo HTML Preview ===\n", memo_html)
+    return card, memo_html
+
+if __name__ == "__main__":
+    app()

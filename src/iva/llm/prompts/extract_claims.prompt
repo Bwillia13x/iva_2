@@ -1,0 +1,8 @@
+Given the following company URL text and metadata, extract concrete claims related to:
+- licensing/registrations (e.g., money transmitter licenses by state, FINTRAC MSB, RIA/BD)
+- partner banks/sponsors
+- security/compliance (SOC 2 Type I/II, ISO 27001, security.txt)
+- regulatory interactions (CFPB, SEC)
+- quantifiable statements ("licensed in X states", "SOC 2 certified", "partnered with Bank X")
+
+Return claims with entity, jurisdiction, claim_kind, values, effective_date when present. Avoid speculative content.

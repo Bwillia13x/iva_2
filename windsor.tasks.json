@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "tasks": [
+    { "label": "Bootstrap", "command": "make dev" },
+    { "label": "Run API", "command": "make run" },
+    { "label": "Verify URL", "command": "make cli URL=https://acmepayments.com COMPANY='Acme Payments Inc.'" },
+    { "label": "Tests", "command": "make test" }
+  ]
+}

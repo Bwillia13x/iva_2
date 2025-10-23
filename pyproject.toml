@@ -1,0 +1,22 @@
+[project]
+name = "iva-reality-layer"
+version = "0.1.0"
+description = "Iva 2.0 Reality Layer — Fintech Claim‑to‑Fact Truth Meter (MVP)"
+readme = "README.txt"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+exclude = [".venv", "venv", "build", "dist"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+ignore = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"

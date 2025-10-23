@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  api:
+    build: .
+    env_file: .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    volumes:
+      - ./:/app
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: iva
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:

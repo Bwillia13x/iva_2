@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block content %}
+  <div class="grid md:grid-cols-2 gap-8">
+    <section>
+      <h2 class="text-xl font-semibold text-slate-900 mb-4">Run Truth Meter</h2>
+      <form action="/run" method="post" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-slate-600 mb-1">Company URL</label>
+          <input required name="url" type="url" placeholder="https://example.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400/50 bg-white/70"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-slate-600 mb-1">Company Name</label>
+          <input required name="company" type="text" placeholder="Acme Payments Inc." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400/50 bg-white/70"/>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-600 mb-1">Jurisdiction</label>
+            <select name="jurisdiction" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/70">
+              <option value="US">US</option>
+              <option value="CA">CA</option>
+              <option value="EU">EU</option>
+              <option value="UK">UK</option>
+            </select>
+          </div>
+          <div class="flex items-end gap-4">
+            <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+              <input type="checkbox" name="render_js" value="1" class="rounded" /> Render JS
+            </label>
+            <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+              <input type="checkbox" name="send_to_slack" value="1" class="rounded" /> Send to Slack
+            </label>
+          </div>
+        </div>
+        <div class="pt-2">
+          <button class="btn px-5 py-3 rounded-xl bg-black text-white shadow-sm hover:shadow-lg">Run Truth Meter</button>
+        </div>
+        <p class="text-xs text-slate-500">Requires configured OPENAI_API_KEY. Slack posting is optional.</p>
+      </form>
+    </section>
+
+    <section>
+      <h2 class="text-xl font-semibold text-slate-900 mb-4">About</h2>
+      <p class="text-slate-600 leading-relaxed">Iva’s Reality Layer turns claims into facts. It extracts licensing, partner-bank, and security assertions from a company’s site, checks authoritative sources, reconciles discrepancies, and produces a severity/confidence truth card and memo.</p>
+      <ul class="mt-4 space-y-2 text-slate-600 text-sm">
+        <li>• Ingest ➜ Extract claims ➜ Query sources ➜ Reconcile ➜ Slack card + Memo</li>
+        <li>• Adapters (MVP): NMLS, FINTRAC, EDGAR, CFPB, Bank partners, Trust center, News (stubs/live mix)</li>
+        <li>• Advisory only — not legal advice</li>
+      </ul>
+    </section>
+  </div>
+
+  {% if error %}
+    <div class="mt-8 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700">{{ error }}</div>
+  {% endif %}
+
+  {% if result %}
+  <div class="mt-8 grid lg:grid-cols-2 gap-8">
+    <div class="glass rounded-2xl p-5 border border-slate-200/70">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <div class="text-sm text-slate-500">{{ result.company }}</div>
+          <div class="text-lg font-semibold text-slate-900">Truth Card</div>
+        </div>
+        <div class="text-sm text-slate-500">{{ result.card.severity_summary }} • Conf {{ (result.card.overall_confidence*100)|round }}%</div>
+      </div>
+      <div class="divide-y divide-slate-200">
+        {% for d in result.card.discrepancies %}
+          <div class="py-4">
+            <div class="flex items-center gap-2">
+              <div class="text-xl">{{ sev_emoji(d.severity) }}</div>
+              <div class="font-medium text-slate-900">{{ d.type }} <span class="text-slate-500 text-xs">(sev {{ d.severity }}, conf {{ (d.confidence*100)|round }}%)</span></div>
+            </div>
+            <div class="mt-2 text-slate-700 text-sm">Why it matters: {{ d.why_it_matters }}</div>
+            <div class="text-slate-600 text-sm">Expected evidence: {{ d.expected_evidence }}</div>
+            <ul class="mt-2 text-sm text-slate-700 space-y-1">
+              {% for f in d.findings %}
+                <li>• <span class="font-medium">{{ f.key }}</span> = {{ f.value }} <span class="text-slate-500">({{ f.status }})</span></li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% else %}
+          <div class="py-6 text-slate-500">No discrepancies flagged.</div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div class="glass rounded-2xl p-5 border border-slate-200/70">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-lg font-semibold text-slate-900">Memo HTML</div>
+          <button type="button" class="btn px-3 py-1.5 rounded-lg border border-slate-200" data-copy="memoHtml" onclick="copyText('memoHtml')">Copy</button>
+        </div>
+        <div id="memoHtml" class="prose prose-slate max-w-none">{{ result.memo_html | safe }}</div>
+      </div>
+      <div class="glass rounded-2xl p-5 border border-slate-200/70">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-lg font-semibold text-slate-900">Raw JSON</div>
+          <button type="button" class="btn px-3 py-1.5 rounded-lg border border-slate-200" data-copy="cardJson" onclick="copyText('cardJson')">Copy</button>
+        </div>
+        <pre id="cardJson" class="text-xs bg-white/70 rounded-xl p-3 overflow-auto">{{ result.card_json }}</pre>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+{% endblock %}

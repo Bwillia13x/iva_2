@@ -1,0 +1,11 @@
+Subject: Quick follow-up on {{ company }} trust center and compliance artifacts
+
+Hi {{ contact_name }},
+
+We ran an automated pass on {{ company }}'s site to prep diligence. Could you share:
+- SOC 2 Type {{ soc_type }} letter (date/scope)
+- Current license roster (NMLS states)
+- Sponsor bank confirmation
+
+Thanks!
+— Iva

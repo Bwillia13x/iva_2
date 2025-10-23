@@ -49,3 +49,4 @@ tqdm
 trafilatura
 typer[all]
 uvicorn[standard]
+python-multipart

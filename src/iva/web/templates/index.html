@@ -31,11 +31,21 @@
             </label>
           </div>
         </div>
-        <div class="pt-2">
-          <button class="btn px-5 py-3 rounded-xl bg-black text-white shadow-sm hover:shadow-lg">Run Truth Meter</button>
+        <div class="pt-2 flex gap-3">
+          <button type="submit" class="btn px-5 py-3 rounded-xl bg-black text-white shadow-sm hover:shadow-lg">Run Truth Meter</button>
+          <button type="button" onclick="loadDemo()" class="btn px-5 py-3 rounded-xl bg-white border-2 border-slate-200 text-slate-700 shadow-sm hover:shadow-lg hover:border-slate-300">✨ Try Demo</button>
         </div>
         <p class="text-xs text-slate-500">Requires configured OPENAI_API_KEY. Slack posting is optional.</p>
       </form>
+      <script>
+        function loadDemo() {
+          document.querySelector('input[name="url"]').value = 'https://stripe.com';
+          document.querySelector('input[name="company"]').value = 'Stripe Inc.';
+          document.querySelector('select[name="jurisdiction"]').value = 'US';
+          // Scroll to form
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      </script>
     </section>
 
     <section>

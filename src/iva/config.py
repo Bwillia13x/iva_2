@@ -7,8 +7,8 @@ load_dotenv()
 
 class Settings(BaseModel):
     openai_api_key: str = Field(default_factory=lambda: os.getenv("OPENAI_API_KEY",""))
-    openai_model_code: str = os.getenv("OPENAI_MODEL_CODE","gpt5-codex")
-    openai_model_reasoning: str = os.getenv("OPENAI_MODEL_REASONING","gpt-4.1")
+    openai_model_code: str = os.getenv("OPENAI_MODEL_CODE","gpt-5codex")
+    openai_model_reasoning: str = os.getenv("OPENAI_MODEL_REASONING","chatgpt5thinking")
     embedding_model: str = os.getenv("EMBEDDING_MODEL","text-embedding-3-large")
 
     slack_webhook_url: str = os.getenv("SLACK_WEBHOOK_URL","")

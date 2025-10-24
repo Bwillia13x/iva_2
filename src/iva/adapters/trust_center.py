@@ -1,6 +1,6 @@
 import asyncio, socket, ssl
 from urllib.parse import urlparse
-from datetime import datetime
+from datetime import datetime, UTC
 import httpx
 from ..models.sources import AdapterFinding, Citation
 
@@ -26,7 +26,10 @@ async def check_trust_center(base_url: str) -> list[AdapterFinding]:
         key="security_txt",
         value=str(has_sec),
         status="confirmed" if has_sec else "not_found",
-        citations=[Citation(source="security.txt", url=sec_url, query="", accessed_at=datetime.utcnow())]
+        adapter="trust_center",
+        observed_at=datetime.now(UTC),
+        snippet="security.txt contact information discovered" if has_sec else "security.txt endpoint missing",
+        citations=[Citation(source="security.txt", url=sec_url, query="", accessed_at=datetime.now(UTC))]
     ))
     domain = urlparse(base_url).hostname or base_url
     exp = tls_expiry(domain)
@@ -34,6 +37,9 @@ async def check_trust_center(base_url: str) -> list[AdapterFinding]:
         key="tls_cert_expiry",
         value=str(exp),
         status="confirmed" if exp else "unknown",
-        citations=[Citation(source="TLS", url=base_url, query="", accessed_at=datetime.utcnow())]
+        adapter="trust_center",
+        observed_at=datetime.now(UTC),
+        snippet=f"TLS certificate expiry {exp}" if exp else "TLS certificate expiry unavailable",
+        citations=[Citation(source="TLS", url=base_url, query="", accessed_at=datetime.now(UTC))]
     ))
     return findings

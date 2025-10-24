@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 from ..models.sources import AdapterFinding, Citation
 
 async def search_press(company: str, partner_bank: str | None = None) -> list[AdapterFinding]:
@@ -9,11 +9,14 @@ async def search_press(company: str, partner_bank: str | None = None) -> list[Ad
             key="press_partner_announcement",
             value="",
             status="not_found",
+            adapter="news",
+            observed_at=datetime.now(UTC),
+            snippet="No press article confirming the partnership was located (stub search).",
             citations=[Citation(
                 source="News search (stub)",
                 url="https://news.google.com/",
                 query=f"{company} {partner_bank or 'sponsor bank'} partnership",
-                accessed_at=datetime.utcnow(),
+                accessed_at=datetime.now(UTC),
                 note="MVP stub"
             )]
         )

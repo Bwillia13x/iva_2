@@ -1,5 +1,5 @@
 import asyncio, uuid
-from datetime import datetime
+from datetime import datetime, UTC
 import typer
 from .config import settings
 from .ingestion.fetch import fetch_html, fetch_rendered
@@ -10,6 +10,12 @@ from .adapters import nmls, fintrac, edgar, cfpb, bank_partners, trust_center, n
 from .reconcile.engine import reconcile
 from .notify.slack import post_slack
 from .notify.memo import render_html
+from .learning.feedback import (
+    FeedbackEntry,
+    FeedbackLogger,
+    AnalystAction,
+    sync_feedback,
+)
 
 app = typer.Typer()
 
@@ -39,6 +45,32 @@ def verify(url: str, company: str, jurisdiction: str = "US", render_js: bool = F
     # CLI default: emit Slack if configured
     asyncio.run(_verify(url, company, jurisdiction, render_js, emit_slack=True))
 
+@app.command("feedback")
+def log_feedback(
+    card_url: str = typer.Argument(..., help="Truth card URL or identifier under review."),
+    company: str = typer.Argument(..., help="Company name shown on the truth card."),
+    discrepancy_type: str = typer.Argument(..., help="Discrepancy type being overridden."),
+    action: AnalystAction = typer.Argument(..., help="Analyst action (confirm/dismiss/override/escalate)."),
+    updated_verdict: str | None = typer.Option(None, "--verdict", help="Revised verdict after analyst action."),
+    notes: str = typer.Option("", "--notes", "-n", help="Optional analyst note or remediation summary."),
+    actor: str = typer.Option("analyst", "--actor", help="Identifier of analyst submitting feedback."),
+):
+    """
+    Record analyst feedback for reconciliation learning loops.
+    """
+    entry = FeedbackEntry(
+        card_url=card_url,
+        company=company,
+        discrepancy_type=discrepancy_type,
+        analyst_action=action,
+        actor=actor,
+        notes=notes or None,
+        updated_verdict=updated_verdict,
+    )
+    FeedbackLogger().log(entry)
+    adjustments = sync_feedback()
+    typer.echo(f"Feedback logged. Current adjustments for {discrepancy_type}: {adjustments.get(discrepancy_type, {})}")
+
 async def _verify(url: str, company: str, jurisdiction: str, render_js: bool, emit_slack: bool = True):
     html = await (fetch_rendered(url) if render_js else fetch_html(url))
     text = html_to_text(html)
@@ -63,7 +95,7 @@ async def _verify(url: str, company: str, jurisdiction: str, render_js: bool, em
             effective_date=c.get("effective_date"),
             citations=[]
         ))
-    claimset = ClaimSet(url=url, company=company, extracted_at=datetime.utcnow(), claims=claims)
+    claimset = ClaimSet(url=url, company=company, extracted_at=datetime.now(UTC), claims=claims)
     
     print(f"\n[DEBUG] Created ClaimSet with {len(claims)} claims:")
     for i, cl in enumerate(claims[:5], 1):

@@ -58,9 +58,15 @@ Thumbs.db
 
 # Playwright
 .ms-playwright/
+attached_assets/e2e/
 
 # Replit
 .upm/
 .cache/
 .config/
 .pythonlibs/
+
+# Feedback runtime data
+data/feedback/events.jsonl
+data/feedback/rule_adjustments.json
+data/feedback/prompt_overrides.md

@@ -9,10 +9,21 @@ def _severity_emoji(sev: str) -> str:
 def card_to_blocks(card: TruthCard):
     blocks = [
       {"type":"header","text":{"type":"plain_text","text":f"Iva • Truth Meter for {card.company}","emoji":True}},
-      {"type":"context","elements":[{"type":"mrkdwn","text":f"<{card.url}|{card.url}> • {card.severity_summary} • Confidence {round(card.overall_confidence*100)}%"}]},
+      {"type":"context","elements":[{"type":"mrkdwn","text":f"<{card.url}|{card.url}> • {card.severity_summary} • Confidence {round(card.overall_confidence*100)}% • Generated {card.generated_at.isoformat()}"}]},
     ]
     for d in card.discrepancies[:5]:
-        text = f"*Claim ID:* `{d.claim_id}`\n*Why it matters:* {d.why_it_matters}\n*Expected evidence:* {d.expected_evidence}\n*Findings:* " + "; ".join([f"{f.key}={f.value} ({f.status})" for f in d.findings])
+        followups = "; ".join(d.explanation.follow_up_actions) if d.explanation.follow_up_actions else "None"
+        provenance = "; ".join([f"{p.adapter} @ {p.observed_at.date()}" for p in d.provenance]) or "n/a"
+        evidence = "; ".join([f"{e.adapter}:{e.finding_key}" for e in d.explanation.supporting_evidence]) or "n/a"
+        text = (
+            f"*Claim ID:* `{d.claim_id}`\n"
+            f"*Why it matters:* {d.why_it_matters}\n"
+            f"*Expected evidence:* {d.expected_evidence}\n"
+            f"*Verdict:* {d.explanation.verdict} ({round(d.explanation.confidence*100)}%)\n"
+            f"*Follow-ups:* {followups}\n"
+            f"*Evidence:* {evidence}\n"
+            f"*Provenance:* {provenance}"
+        )
         blocks.append({
             "type":"section",
             "text":{"type":"mrkdwn","text":f"{_severity_emoji(d.severity)} *{d.type}* • Sev: *{d.severity}* • Conf: {round(d.confidence*100)}%\n{text}"}

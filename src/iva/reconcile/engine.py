@@ -1,8 +1,69 @@
+from datetime import datetime, UTC
 from typing import List
-from ..models.claims import ExtractedClaim, ClaimSet
-from ..models.recon import Discrepancy, TruthCard
+from ..models.claims import ClaimSet, ExtractedClaim
+from ..models.recon import (
+    Discrepancy,
+    TruthCard,
+    ExplanationBundle,
+    EvidencePointer,
+    FindingProvenance,
+)
+from ..models.sources import AdapterFinding
 from .severity import score_severity
 from .citations import confidence_from_findings
+
+def _evidence_from_findings(findings: List[AdapterFinding]) -> List[EvidencePointer]:
+    evidence: List[EvidencePointer] = []
+    for f in findings:
+        evidence.append(EvidencePointer(
+            adapter=f.adapter,
+            finding_key=f.key,
+            summary=f.snippet or f.value or f.status,
+            citation_urls=[c.url for c in f.citations if c.url],
+        ))
+    return evidence
+
+def _provenance_from_findings(findings: List[AdapterFinding]) -> List[FindingProvenance]:
+    provenance: List[FindingProvenance] = []
+    for f in findings:
+        provenance.append(FindingProvenance(
+            adapter=f.adapter,
+            finding_key=f.key,
+            observed_at=f.observed_at,
+            snippet=f.snippet,
+            source_urls=[c.url for c in f.citations if c.url],
+        ))
+    return provenance
+
+def _verdict_for_severity(severity: str) -> str:
+    if severity == "high":
+        return "escalate"
+    if severity == "med":
+        return "needs_review"
+    return "monitor"
+
+def _make_explanation(severity: str, confidence: float, findings: List[AdapterFinding], follow_ups: List[str], notes: str) -> ExplanationBundle:
+    return ExplanationBundle(
+        verdict=_verdict_for_severity(severity),
+        supporting_evidence=_evidence_from_findings(findings),
+        confidence=confidence,
+        follow_up_actions=follow_ups,
+        notes=notes,
+    )
+
+def _build_discrepancy(claim: ExtractedClaim, dtype: str, severity: str, confidence: float, why: str, expected: str, findings: List[AdapterFinding], follow_ups: List[str]) -> Discrepancy:
+    return Discrepancy(
+        claim_id=claim.id,
+        type=dtype,
+        severity=severity,
+        confidence=confidence,
+        why_it_matters=why,
+        expected_evidence=expected,
+        findings=findings,
+        claim_text=claim.claim_text,
+        explanation=_make_explanation(severity, confidence, findings, follow_ups, why),
+        provenance=_provenance_from_findings(findings),
+    )
 
 def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
     """
@@ -35,16 +96,19 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                             states_list = []
                 if states_list and len(states_list) < 20:
                     ev = confidence_from_findings(findings)
-                    sev, conf = score_severity(cl.category,"underlicensed", ev)
-                    discrepancies.append(Discrepancy(
-                        claim_id=cl.id,
-                        type="underlicensed_vs_claim",
+                    sev, conf = score_severity(cl.category,"underlicensed_vs_claim", ev)
+                    discrepancies.append(_build_discrepancy(
+                        claim=cl,
+                        dtype="underlicensed_vs_claim",
                         severity=sev,
                         confidence=conf,
-                        why_it_matters="Compliance and go-to-market risk; may impact money movement and onboarding.",
-                        expected_evidence="NMLS roster export or auditor letter with current state licenses.",
+                        why="Compliance and go-to-market risk; may impact money movement and onboarding.",
+                        expected="NMLS roster export or auditor letter with current state licenses.",
                         findings=findings,
-                        claim_text=cl.claim_text
+                        follow_ups=[
+                            "Request updated NMLS roster from the compliance owner.",
+                            "Align marketing copy with current state coverage."
+                        ],
                     ))
         if cl.category == "partner_bank":
             bank_findings = adapter_results.get("bank_partners",[]) + adapter_results.get("news",[])
@@ -52,15 +116,18 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
             if not has_confirmed:
                 ev = confidence_from_findings(bank_findings)
                 sev, conf = score_severity(cl.category,"partner_unverified", ev)
-                discrepancies.append(Discrepancy(
-                    claim_id=cl.id,
-                    type="partner_unverified",
+                discrepancies.append(_build_discrepancy(
+                    claim=cl,
+                    dtype="partner_unverified",
                     severity=sev,
                     confidence=conf,
-                    why_it_matters="Sponsor bank claims require verification; affects issuing and compliance.",
-                    expected_evidence="Bank partner page listing or joint press release.",
+                    why="Sponsor bank claims require verification; affects issuing and compliance.",
+                    expected="Bank partner page listing or joint press release.",
                     findings=bank_findings,
-                    claim_text=cl.claim_text
+                    follow_ups=[
+                        "Secure sponsor bank confirmation or contract excerpt.",
+                        "Escalate to partnerships lead for attestation."
+                    ],
                 ))
         # SECURITY CERTIFICATIONS
         if cl.category == "security":
@@ -71,15 +138,18 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                 if any(getattr(f,'key',None)=="security_txt" and getattr(f,'status',None)=="not_found" for f in sec_findings):
                     ev = confidence_from_findings(sec_findings)
                     sev, conf = score_severity(cl.category,"soc2_unsubstantiated", ev)
-                    discrepancies.append(Discrepancy(
-                        claim_id=cl.id,
-                        type="soc2_unsubstantiated",
+                    discrepancies.append(_build_discrepancy(
+                        claim=cl,
+                        dtype="soc2_unsubstantiated",
                         severity=sev,
                         confidence=conf,
-                        why_it_matters="Unverified SOC 2 claim can be misleading; request auditor letter or trust center link.",
-                        expected_evidence="SOC 2 Type II auditor letter (date, scope) or trust center reference.",
+                        why="Unverified SOC 2 claim can be misleading; request auditor letter or trust center link.",
+                        expected="SOC 2 Type II auditor letter (date, scope) or trust center reference.",
                         findings=sec_findings,
-                        claim_text=cl.claim_text
+                        follow_ups=[
+                            "Request SOC 2 auditor letter or trust center link from security lead.",
+                            "Pause external messaging until attestation is confirmed."
+                        ],
                     ))
             
             # Check ISO certifications
@@ -87,30 +157,36 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                 if not any(getattr(f,'key',None)=="iso_cert" and getattr(f,'status',None)=="confirmed" for f in sec_findings):
                     ev = confidence_from_findings(sec_findings)
                     sev, conf = score_severity(cl.category,"iso_unverified", ev)
-                    discrepancies.append(Discrepancy(
-                        claim_id=cl.id,
-                        type="iso_unverified",
+                    discrepancies.append(_build_discrepancy(
+                        claim=cl,
+                        dtype="iso_unverified",
                         severity=sev,
                         confidence=conf,
-                        why_it_matters="ISO certification claims should be verifiable through certificate registries.",
-                        expected_evidence="ISO certificate number or listing in certification body database.",
+                        why="ISO certification claims should be verifiable through certificate registries.",
+                        expected="ISO certificate number or listing in certification body database.",
                         findings=sec_findings,
-                        claim_text=cl.claim_text
+                        follow_ups=[
+                            "Collect ISO certificate ID and certification body from security team.",
+                            "Update claim copy with verified scope and coverage."
+                        ],
                     ))
             
             # Check PCI DSS claims
             if "PCI" in (cl.claim_text or ""):
                 ev = confidence_from_findings(sec_findings)
-                sev, conf = score_severity(cl.category,"pci_mention", ev)
-                discrepancies.append(Discrepancy(
-                    claim_id=cl.id,
-                    type="pci_requires_verification",
+                sev, conf = score_severity(cl.category,"pci_requires_verification", ev)
+                discrepancies.append(_build_discrepancy(
+                    claim=cl,
+                    dtype="pci_requires_verification",
                     severity=sev,
                     confidence=conf,
-                    why_it_matters="PCI DSS compliance level should be verified with QSA attestation.",
-                    expected_evidence="PCI DSS Attestation of Compliance (AOC) or QSA letter with level and date.",
+                    why="PCI DSS compliance level should be verified with QSA attestation.",
+                    expected="PCI DSS Attestation of Compliance (AOC) or QSA letter with level and date.",
                     findings=sec_findings,
-                    claim_text=cl.claim_text
+                    follow_ups=[
+                        "Request current AOC or QSA attestation letter.",
+                        "Confirm PCI scope with payments ops stakeholder."
+                    ],
                 ))
         
         # MARKETING CLAIMS - Flag unverifiable or exaggerated claims
@@ -122,16 +198,19 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                 has_confirmed = any(getattr(f,'status',None)=="confirmed" for f in market_findings)
                 if not has_confirmed:
                     ev = confidence_from_findings(market_findings)
-                    sev, conf = score_severity(cl.category,"customer_count_unverified", ev)
-                    discrepancies.append(Discrepancy(
-                        claim_id=cl.id,
-                        type="marketing_metric_unverified",
+                    sev, conf = score_severity(cl.category,"marketing_metric_unverified", ev)
+                    discrepancies.append(_build_discrepancy(
+                        claim=cl,
+                        dtype="marketing_metric_unverified",
                         severity=sev,
                         confidence=conf,
-                        why_it_matters="Customer counts are often marketing puffery; verify against SEC filings or audited reports.",
-                        expected_evidence="SEC 10-K/10-Q user metrics or audited customer count statement.",
+                        why="Customer counts are often marketing puffery; verify against SEC filings or audited reports.",
+                        expected="SEC 10-K/10-Q user metrics or audited customer count statement.",
                         findings=market_findings,
-                        claim_text=cl.claim_text
+                        follow_ups=[
+                            "Request audited customer count from finance or strategy.",
+                            "Replace claim with certified figures before publication."
+                        ],
                     ))
             
             # Check transaction volume claims - only flag if NOT confirmed
@@ -139,32 +218,38 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                 has_confirmed = any(getattr(f,'status',None)=="confirmed" for f in market_findings)
                 if not has_confirmed:
                     ev = confidence_from_findings(market_findings)
-                    sev, conf = score_severity(cl.category,"volume_unverified", ev)
-                    discrepancies.append(Discrepancy(
-                        claim_id=cl.id,
-                        type="marketing_metric_unverified",
+                    sev, conf = score_severity(cl.category,"marketing_metric_unverified", ev)
+                    discrepancies.append(_build_discrepancy(
+                        claim=cl,
+                        dtype="marketing_metric_unverified",
                         severity=sev,
                         confidence=conf,
-                        why_it_matters="Transaction volumes should be verified against regulatory filings or audited statements.",
-                        expected_evidence="SEC filing with payment volume metrics or press release with audited figures.",
+                        why="Transaction volumes should be verified against regulatory filings or audited statements.",
+                        expected="SEC filing with payment volume metrics or press release with audited figures.",
                         findings=market_findings,
-                        claim_text=cl.claim_text
+                        follow_ups=[
+                            "Gather audited payment volume from finance or data team.",
+                            "Escalate marketing claim for revision until figures are confirmed."
+                        ],
                     ))
             
             # Check vague claims like "leading", "fastest"
             vague_words = ["leading", "fastest", "best", "#1", "top", "premier"]
             if any(word in (cl.claim_text or "").lower() for word in vague_words):
                 ev = confidence_from_findings(market_findings)
-                sev, conf = score_severity(cl.category,"vague_marketing", ev)
-                discrepancies.append(Discrepancy(
-                    claim_id=cl.id,
-                    type="vague_marketing_claim",
+                sev, conf = score_severity(cl.category,"vague_marketing_claim", ev)
+                discrepancies.append(_build_discrepancy(
+                    claim=cl,
+                    dtype="vague_marketing_claim",
                     severity=sev,
                     confidence=conf,
-                    why_it_matters="Superlative marketing claims ('leading', 'best') are subjective and often unsubstantiated.",
-                    expected_evidence="Independent market research, industry report, or specific metric defining 'leading' status.",
+                    why="Superlative marketing claims ('leading', 'best') are subjective and often unsubstantiated.",
+                    expected="Independent market research, industry report, or specific metric defining 'leading' status.",
                     findings=market_findings,
-                    claim_text=cl.claim_text
+                    follow_ups=[
+                        "Swap subjective superlatives for measurable metrics.",
+                        "Attach third-party research or market share data if claim persists."
+                    ],
                 ))
         
         # REGULATORY CLAIMS
@@ -176,16 +261,19 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                 sec_filings = [f for f in reg_findings if getattr(f,'key',None)=="edgar_search"]
                 if not sec_filings or all(getattr(f,'status',None)!="confirmed" for f in sec_filings):
                     ev = confidence_from_findings(reg_findings)
-                    sev, conf = score_severity(cl.category,"sec_unverified", ev)
-                    discrepancies.append(Discrepancy(
-                        claim_id=cl.id,
-                        type="regulatory_claim_unverified",
+                    sev, conf = score_severity(cl.category,"regulatory_claim_unverified", ev)
+                    discrepancies.append(_build_discrepancy(
+                        claim=cl,
+                        dtype="regulatory_claim_unverified",
                         severity=sev,
                         confidence=conf,
-                        why_it_matters="SEC registration can be verified through EDGAR; false claims are serious violations.",
-                        expected_evidence="CIK number and EDGAR filing history for RIA, BD, or other registration.",
+                        why="SEC registration can be verified through EDGAR; false claims are serious violations.",
+                        expected="CIK number and EDGAR filing history for RIA, BD, or other registration.",
                         findings=reg_findings,
-                        claim_text=cl.claim_text
+                        follow_ups=[
+                            "Confirm SEC registration status and obtain CIK from legal.",
+                            "Update marketing and disclosures if registration is absent."
+                        ],
                     ))
         
         # COMPLIANCE CLAIMS
@@ -195,31 +283,37 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
             # Check AML/KYC claims
             if any(term in (cl.claim_text or "").upper() for term in ["AML", "KYC", "BSA"]):
                 ev = confidence_from_findings(comp_findings)
-                sev, conf = score_severity(cl.category,"aml_program_mention", ev)
-                discrepancies.append(Discrepancy(
-                    claim_id=cl.id,
-                    type="compliance_program_mentioned",
+                sev, conf = score_severity(cl.category,"compliance_program_mentioned", ev)
+                discrepancies.append(_build_discrepancy(
+                    claim=cl,
+                    dtype="compliance_program_mentioned",
                     severity=sev,
                     confidence=conf,
-                    why_it_matters="AML/KYC programs should be documented and verifiable; vague mentions are red flags.",
-                    expected_evidence="AML policy document, compliance program description, or regulatory examination results.",
+                    why="AML/KYC programs should be documented and verifiable; vague mentions are red flags.",
+                    expected="AML policy document, compliance program description, or regulatory examination results.",
                     findings=comp_findings,
-                    claim_text=cl.claim_text
+                    follow_ups=[
+                        "Request AML/KYC policy pack from compliance.",
+                        "Ensure public statements reflect actual program status."
+                    ],
                 ))
             
             # Check GDPR/CCPA claims
             if any(term in (cl.claim_text or "").upper() for term in ["GDPR", "CCPA"]):
                 ev = confidence_from_findings(comp_findings)
-                sev, conf = score_severity(cl.category,"privacy_compliance", ev)
-                discrepancies.append(Discrepancy(
-                    claim_id=cl.id,
-                    type="privacy_compliance_claim",
+                sev, conf = score_severity(cl.category,"privacy_compliance_claim", ev)
+                discrepancies.append(_build_discrepancy(
+                    claim=cl,
+                    dtype="privacy_compliance_claim",
                     severity=sev,
                     confidence=conf,
-                    why_it_matters="Privacy compliance should be documented in privacy policy with specific measures.",
-                    expected_evidence="Privacy policy with GDPR/CCPA-specific rights, DPO contact, or privacy certification.",
+                    why="Privacy compliance should be documented in privacy policy with specific measures.",
+                    expected="Privacy policy with GDPR/CCPA-specific rights, DPO contact, or privacy certification.",
                     findings=comp_findings,
-                    claim_text=cl.claim_text
+                    follow_ups=[
+                        "Obtain privacy compliance documentation from legal.",
+                        "Clarify public claim with exact scope of GDPR/CCPA coverage."
+                    ],
                 ))
     sev_counts = {"high":0,"med":0,"low":0}
     for d in discrepancies: sev_counts[d.severity]+=1
@@ -230,5 +324,6 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
         company=claims.company,
         severity_summary=severity_summary,
         discrepancies=discrepancies,
-        overall_confidence=overall_confidence
+        overall_confidence=overall_confidence,
+        generated_at=datetime.now(UTC),
     )

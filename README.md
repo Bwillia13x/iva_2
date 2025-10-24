@@ -220,8 +220,8 @@ src/iva/
 │
 ├── models/            # Pydantic data models
 │   ├── claims.py      # ClaimSet, ExtractedClaim
-│   ├── sources.py     # AdapterFinding, Citation
-│   └── recon.py       # TruthCard, Discrepancy
+│   ├── sources.py     # AdapterFinding, Citation, provenance metadata
+│   └── recon.py       # TruthCard, Discrepancy, ExplanationBundle
 │
 ├── reconcile/         # Claim reconciliation engine
 │   ├── engine.py      # Core reconciliation logic
@@ -237,9 +237,12 @@ src/iva/
 │   └── index.html     # Main interface
 │
 ├── eval/              # Evaluation and testing
-│   ├── harness.py     # Test harness
+│   ├── harness.py     # Tiered evaluation harness & drift checks
 │   ├── metrics.py     # Performance metrics (precision@K, recall)
+│   ├── artifacts.py   # Truth-card artifact generation (Playwright)
 │   └── datasets/      # Golden datasets for testing
+│
+├── learning/          # Analyst feedback ingestion & calibration
 │
 ├── cli.py             # Command-line interface (Typer)
 ├── config.py          # Configuration and settings
@@ -264,14 +267,31 @@ make test
 # Code quality checks
 make lint    # ruff check .
 make format  # ruff format .
+
+# Generate truth-card artifacts during e2e tests
+PYTHONPATH=. pytest tests/e2e/test_pipeline.py -q
 ```
 
 ### Golden Dataset
 
-The project includes a golden dataset (`src/iva/eval/datasets/`) with known-good examples for testing:
-- Stripe (licensed MSB, SOC 2 certified)
-- Plaid (SEC-registered, partner bank claims)
-- Square (public company, NMLS licenses)
+The project includes a golden dataset (`src/iva/eval/datasets/`) with compact JSONL cases. Each entry pairs expected discrepancies, verdicts, and confidence ranges so regression runs can flag drift automatically. Extend this file when adding new discrepancy types or severity tiers.
+
+---
+
+## 🧠 Structured Explanations & Artifacts
+
+- Every discrepancy now exposes an `ExplanationBundle` (verdict, confidence, follow-up actions, supporting evidence) plus provenance metadata for adapter findings. Consumers can rely on stable fields instead of parsing markdown.
+- Slack and memo outputs highlight the bundle verdict, follow-up actions, and adapter provenance automatically.
+- The evaluation harness supports `unit`, `integration`, and `regression` tiers, tracking bundle completeness, discrepancy recall, and confidence drift. Consume it via:
+
+```python
+from src.iva.eval.harness import load_golden, evaluate, EvaluationTier
+
+report = evaluate(pred_cards, load_golden(), tier=EvaluationTier.REGRESSION)
+print(report.metrics, report.failures)
+```
+
+- Playwright-backed artifact generation lives in `src/iva/eval/artifacts.py`. Call `generate_truthcard_artifacts(card)` to capture a JSON dump, human-readable summary, DOM snapshot, and annotated screenshot in `attached_assets/e2e/`.
 
 ---
 
@@ -296,6 +316,22 @@ The project includes a golden dataset (`src/iva/eval/datasets/`) with known-good
 
 - **gpt-5-codex**: Optimized for code and structured data extraction. Excels at parsing HTML, identifying patterns, and outputting JSON schemas.
 - **gpt-5-thinking**: Advanced reasoning model that can assess claim plausibility, identify nuanced discrepancies, and provide human-like explanations.
+
+---
+
+## 🗣️ Analyst Feedback Loop
+
+- Analysts can calibrate severities and prompt hints using the CLI:
+
+```bash
+python -m src.iva.cli feedback \
+  https://example.com/acme "Acme Payments Inc." \
+  underlicensed_vs_claim override \
+  --verdict monitor \
+  --notes "Updated roster confirmed 28 states"
+```
+
+- Feedback is appended to `data/feedback/events.jsonl`, and the loop automatically regenerates `rule_adjustments.json` (severity thresholds/confidence shifts) plus `prompt_overrides.md` (latest analyst notes). These files are `.gitignore`d by default—sync them to shared storage if you need persistence across environments.
 
 ---
 

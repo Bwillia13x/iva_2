@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 from ..models.sources import AdapterFinding, Citation
 
 async def check_nmls(company: str) -> list[AdapterFinding]:
@@ -9,11 +9,14 @@ async def check_nmls(company: str) -> list[AdapterFinding]:
             key="us_mtl_states",
             value="['CA','NY','TX','WA','IL','FL','MA','CO','VA','PA','OH','NJ','GA','AZ']",
             status="confirmed",
+            adapter="nmls",
+            observed_at=datetime.now(UTC),
+            snippet="Stubbed NMLS dataset listing multi-state licenses.",
             citations=[Citation(
                 source="NMLS Consumer Access (stub)",
                 url="https://nmlsconsumeraccess.org/",
                 query=f"company:{company}",
-                accessed_at=datetime.utcnow(),
+                accessed_at=datetime.now(UTC),
                 note="MVP stub"
             )]
         )

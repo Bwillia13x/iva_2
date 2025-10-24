@@ -1,6 +1,6 @@
 from typing import List, Optional
-from pydantic import BaseModel
 from datetime import datetime
+from pydantic import BaseModel, Field
 
 class Citation(BaseModel):
     source: str
@@ -13,4 +13,7 @@ class AdapterFinding(BaseModel):
     key: str
     value: str
     status: str  # "confirmed" | "not_found" | "inconsistent" | "unknown"
-    citations: List[Citation]
+    adapter: str
+    observed_at: datetime
+    snippet: Optional[str] = None
+    citations: List[Citation] = Field(default_factory=list)

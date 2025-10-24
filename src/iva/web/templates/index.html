@@ -21,8 +21,9 @@
   </div>
 
   <div class="grid md:grid-cols-2 gap-8">
-    <section>
-      <h2 class="text-xl font-semibold text-slate-900 mb-4">Run Truth Meter</h2>
+    <section class="glass border border-slate-200/80 rounded-2xl p-5 bg-white/60">
+      <h2 class="text-xl font-semibold text-slate-900 mb-1">Analyze any company</h2>
+      <p class="text-sm text-slate-600 mb-4">Paste any fintech marketing site to run the same verification used in the demos.</p>
       <form id="truthForm" action="/run" method="post" class="space-y-4" onsubmit="return handleSubmit(event)">
         <div>
           <label class="block text-sm font-medium text-slate-600 mb-1">Company URL</label>
@@ -114,59 +115,113 @@
   {% endif %}
 
   {% if result %}
-  <div class="mt-8 grid lg:grid-cols-2 gap-8">
-    <div class="glass rounded-2xl p-5 border border-slate-200/70">
-      <div class="flex items-center justify-between mb-3">
+  {% set high_count = result.card.discrepancies | selectattr('severity','equalto','high') | list | length %}
+  {% set med_count = result.card.discrepancies | selectattr('severity','equalto','med') | list | length %}
+  {% set low_count = result.card.discrepancies | selectattr('severity','equalto','low') | list | length %}
+  <div class="mt-8 space-y-6">
+    <div class="glass rounded-2xl p-5 border border-slate-200/70 bg-white/70">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <div class="text-sm text-slate-500">{{ result.company }}</div>
-          <div class="text-lg font-semibold text-slate-900">Truth Card</div>
+          <div class="text-sm uppercase tracking-wide text-slate-500">Truth Meter Summary</div>
+          <div class="text-2xl font-semibold text-slate-900">{{ result.company }}</div>
+          <p class="text-slate-600 text-sm mt-1">Legend: H = High severity, M = Medium severity, L = Low severity discrepancies.</p>
         </div>
-        <div class="text-sm text-slate-500">{{ result.card.severity_summary }} • Conf {{ (result.card.overall_confidence*100)|round }}%</div>
-      </div>
-      <div class="divide-y divide-slate-200">
-        {% for d in result.card.discrepancies %}
-          <div class="py-4">
-            <div class="flex items-center gap-2">
-              <div class="text-xl">{{ sev_emoji(d.severity) }}</div>
-              <div class="font-medium text-slate-900">{{ d.type }} <span class="text-slate-500 text-xs">(sev {{ d.severity }}, conf {{ (d.confidence*100)|round }}%)</span></div>
-            </div>
-            <div class="mt-2 text-slate-700 text-sm">Why it matters: {{ d.why_it_matters }}</div>
-            <div class="text-slate-600 text-sm">Expected evidence: {{ d.expected_evidence }}</div>
-            <ul class="mt-2 text-sm text-slate-700 space-y-1">
-              {% for f in d.findings %}
-                <li>• <span class="font-medium">{{ f.key }}</span> = {{ f.value }} <span class="text-slate-500">({{ f.status }})</span></li>
-              {% endfor %}
-            </ul>
+        <div class="flex gap-3">
+          <div class="text-center">
+            <div class="px-3 py-1 rounded-lg bg-rose-100 text-rose-800 font-semibold text-xs uppercase">High</div>
+            <div class="text-lg font-semibold text-slate-900 mt-1">{{ high_count }}</div>
           </div>
-        {% else %}
-          <div class="py-6 text-slate-500">No discrepancies flagged.</div>
-        {% endfor %}
+          <div class="text-center">
+            <div class="px-3 py-1 rounded-lg bg-amber-100 text-amber-800 font-semibold text-xs uppercase">Med</div>
+            <div class="text-lg font-semibold text-slate-900 mt-1">{{ med_count }}</div>
+          </div>
+          <div class="text-center">
+            <div class="px-3 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-semibold text-xs uppercase">Low</div>
+            <div class="text-lg font-semibold text-slate-900 mt-1">{{ low_count }}</div>
+          </div>
+        </div>
+        <div class="text-right">
+          <div class="text-sm text-slate-500">Overall confidence</div>
+          <div class="text-xl font-semibold text-slate-900">{{ (result.card.overall_confidence*100)|round }}%</div>
+          <div class="text-xs text-slate-500 mt-1">Verdict: {{ result.card.severity_summary }}</div>
+        </div>
       </div>
     </div>
 
-    <div class="space-y-6">
+    <div class="grid lg:grid-cols-2 gap-8">
       <div class="glass rounded-2xl p-5 border border-slate-200/70">
         <div class="flex items-center justify-between mb-3">
-          <div class="text-lg font-semibold text-slate-900">Memo HTML</div>
-          <button type="button" class="btn px-3 py-1.5 rounded-lg border border-slate-200" data-copy="memoHtml" onclick="copyText('memoHtml')">Copy</button>
+          <div>
+            <div class="text-sm text-slate-500">{{ result.company }}</div>
+            <div class="text-lg font-semibold text-slate-900">Truth Card</div>
+          </div>
+          <div class="text-sm text-slate-500">{{ result.card.severity_summary }} • Conf {{ (result.card.overall_confidence*100)|round }}%</div>
         </div>
-        <div id="memoHtml" class="prose prose-slate max-w-none">{{ result.memo_html | safe }}</div>
+        <div class="divide-y divide-slate-200">
+          {% for d in result.card.discrepancies %}
+            <div class="py-4">
+              {% set badge_classes = 'bg-emerald-100 text-emerald-800' %}
+              {% if d.severity == 'high' %}{% set badge_classes = 'bg-rose-100 text-rose-800' %}{% elif d.severity == 'med' %}{% set badge_classes = 'bg-amber-100 text-amber-800' %}{% endif %}
+              <div class="flex items-center gap-2">
+                <div class="text-2xl">{{ sev_emoji(d.severity) }}</div>
+                <div class="font-medium text-slate-900">{{ d.type }}</div>
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ badge_classes }} capitalize">{{ d.severity }}</span>
+                <span class="text-xs text-slate-500">Conf {{ (d.confidence*100)|round }}%</span>
+              </div>
+              {% if d.related_claim_texts %}
+              <div class="mt-2 text-slate-700 text-sm">
+                <span class="font-semibold text-slate-900">Claims:</span>
+                <ul class="mt-1 pl-4 list-disc space-y-1">
+                  {% for text in d.related_claim_texts %}
+                    <li>{{ text }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+              {% endif %}
+              <div class="mt-2 text-slate-700 text-sm">Why it matters: {{ d.why_it_matters }}</div>
+              <div class="text-slate-600 text-sm">Expected evidence: {{ d.expected_evidence }}</div>
+              <ul class="mt-2 text-sm text-slate-700 space-y-1">
+                {% for f in d.findings %}
+                  <li>• <span class="font-medium">{{ f.key }}</span> = {{ f.value }} <span class="text-slate-500">({{ f.status }})</span>
+                    {% if f.citations and f.citations[0].url %}
+                      <a href="{{ f.citations[0].url }}" target="_blank" rel="noopener" class="ml-2 text-blue-600 hover:text-blue-500 text-xs">Source ↗</a>
+                    {% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% else %}
+            <div class="py-6 text-slate-500">No discrepancies flagged.</div>
+          {% endfor %}
+        </div>
       </div>
-      <div class="glass rounded-2xl p-5 border border-slate-200/70">
-        <div class="flex items-center justify-between mb-3">
-          <div class="text-lg font-semibold text-slate-900">Raw JSON</div>
-          <button type="button" class="btn px-3 py-1.5 rounded-lg border border-slate-200" data-copy="cardJson" onclick="copyText('cardJson')">Copy</button>
+
+      <div class="space-y-6">
+        <div class="glass rounded-2xl p-5 border border-slate-200/70">
+          <div class="flex items-center justify-between mb-3">
+            <div class="text-lg font-semibold text-slate-900">Memo HTML</div>
+            <button type="button" class="btn px-3 py-1.5 rounded-lg border border-slate-200" data-copy="memoHtml" onclick="copyText('memoHtml')">Copy</button>
+          </div>
+          <div id="memoHtml" class="prose prose-slate max-w-none">{{ result.memo_html | safe }}</div>
         </div>
-        <pre id="cardJson" class="text-xs bg-white/70 rounded-xl p-3 overflow-auto">{{ result.card_json }}</pre>
+        <div class="glass rounded-2xl p-5 border border-slate-200/70">
+          <details open>
+            <summary class="flex items-center justify-between cursor-pointer">
+              <div class="text-lg font-semibold text-slate-900">Raw JSON</div>
+              <button type="button" class="btn px-3 py-1.5 rounded-lg border border-slate-200 ml-4" data-copy="cardJson" onclick="copyText('cardJson'); event.stopPropagation();">Copy</button>
+            </summary>
+            <pre id="cardJson" class="text-xs bg-white/70 rounded-xl p-3 overflow-auto mt-3">{{ result.card_json }}</pre>
+          </details>
+        </div>
       </div>
     </div>
-  </div>
-  
-  <!-- Run Another Analysis Button -->
-  <div class="mt-6 text-center">
-    <button onclick="location.reload()" class="btn px-6 py-3 rounded-xl bg-slate-700 text-white shadow-sm hover:shadow-lg font-medium">
-      🔄 Run Another Analysis
-    </button>
+
+    <!-- Run Another Analysis Button -->
+    <div class="text-center">
+      <button onclick="location.reload()" class="btn px-6 py-3 rounded-xl bg-slate-700 text-white shadow-sm hover:shadow-lg font-medium">
+        🔄 Run Another Analysis
+      </button>
+    </div>
   </div>
   {% endif %}
 
@@ -174,16 +229,42 @@
     let progressInterval;
     let progressSeconds = 0;
     
+    function showLoadingState() {
+      const form = document.getElementById('truthForm');
+      const formGrid = document.querySelector('.grid.md\\:grid-cols-2');
+      if (document.getElementById('loadingSpinner').classList.contains('hidden')) {
+        if (form) form.style.display = 'none';
+        if (formGrid) formGrid.style.display = 'none';
+        document.getElementById('loadingSpinner').classList.remove('hidden');
+        document.getElementById('loadingSpinner').scrollIntoView({ behavior: 'smooth' });
+        progressSeconds = 0;
+        if (progressInterval) clearInterval(progressInterval);
+        progressInterval = setInterval(updateProgressMessage, 5000);
+      }
+    }
+
+    function normalizeUrl(value) {
+      let trimmed = value.trim();
+      if (!trimmed.startsWith('http://') && !trimmed.startsWith('https://')) {
+        trimmed = 'https://' + trimmed;
+      }
+      if (trimmed.endsWith('/')) {
+        trimmed = trimmed.slice(0, -1);
+      }
+      return trimmed;
+    }
+
     function loadDemo(url, company) {
       document.querySelector('input[name="url"]').value = url;
       document.querySelector('input[name="company"]').value = company;
       document.querySelector('select[name="jurisdiction"]').value = 'US';
       document.querySelector('input[name="render_js"]').checked = false; // Use standard HTML fetching
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      showLoadingState();
       
       // Auto-submit after 500ms delay so user sees fields populate
       setTimeout(() => {
-        document.getElementById('truthForm').submit();
+        document.getElementById('truthForm').requestSubmit();
       }, 500);
     }
 
@@ -259,14 +340,11 @@
         return false;
       }
       
+      // Normalize URL before submitting
+      urlInput.value = normalizeUrl(urlInput.value);
+
       // Hide form and show loading spinner
-      document.getElementById('truthForm').style.display = 'none';
-      formGrid.style.display = 'none';
-      document.getElementById('loadingSpinner').classList.remove('hidden');
-      
-      // Start progress updates every 5 seconds
-      progressSeconds = 0;
-      progressInterval = setInterval(updateProgressMessage, 5000);
+      showLoadingState();
       
       return true;
     }

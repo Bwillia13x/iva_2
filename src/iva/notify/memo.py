@@ -29,12 +29,12 @@ TPL = Template("""
   {% endif %}
   {% if d.explanation.supporting_evidence %}
   <div>Evidence:
-    <ul>{% for e in d.explanation.supporting_evidence %}<li>{{ e.adapter }} • {{ e.finding_key }} — {{ e.summary }}</li>{% endfor %}</ul>
+    <ul>{% for e in d.explanation.supporting_evidence %}<li>{{ e.adapter }} • {{ e.finding_key }} — {{ e.summary }}{% if e.citation_urls %} (<a href="{{ e.citation_urls[0] }}" target="_blank" rel="noopener">Source</a>){% endif %}</li>{% endfor %}</ul>
   </div>
   {% endif %}
   {% if d.provenance %}
   <div>Provenance:
-    <ul>{% for p in d.provenance %}<li>{{ p.adapter }} @ {{ p.observed_at }}{% if p.snippet %} — {{ p.snippet }}{% endif %}</li>{% endfor %}</ul>
+    <ul>{% for p in d.provenance %}<li>{{ p.adapter }} @ {{ p.observed_at }}{% if p.snippet %} — {{ p.snippet }}{% endif %}{% if p.source_urls %} (<a href="{{ p.source_urls[0] }}" target="_blank" rel="noopener">Source</a>){% endif %}</li>{% endfor %}</ul>
   </div>
   {% endif %}
 </div>

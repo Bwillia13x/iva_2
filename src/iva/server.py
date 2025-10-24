@@ -114,7 +114,7 @@ def get_user_friendly_error(error_msg: str, url: str) -> str:
     error_lower = error_msg.lower()
     
     if "connection" in error_lower or "unreachable" in error_lower or "refused" in error_lower:
-        return f"🌐 Unable to connect to {url}. Please check that:<br>• The URL is correct and accessible<br>• The website is currently online<br>• There are no network issues"
+        return f"🌐 Unable to connect to {url}. Please check that:\n• The URL is correct and accessible\n• The website is currently online\n• There are no network issues"
     
     if "timeout" in error_lower:
         return f"⏱️ Connection to {url} timed out. The website may be slow or temporarily unavailable. Please try again in a moment."
@@ -137,12 +137,9 @@ def get_user_friendly_error(error_msg: str, url: str) -> str:
     if "rate limit" in error_lower:
         return "⚡ API rate limit exceeded. Please wait a moment and try again."
     
-    # Preserve multiline formatting with HTML breaks
-    if '\n' in error_msg:
-        error_msg = error_msg.replace('\n', '<br>')
-    
+    # Keep multiline formatting with plain text newlines (CSS will handle display)
     if len(error_msg) > 300:
-        return f"❌ An error occurred during analysis:<br>{error_msg[:300]}...<br><br>Please try again or contact support if the issue persists."
+        return f"❌ An error occurred during analysis:\n{error_msg[:300]}...\n\nPlease try again or contact support if the issue persists."
     
     return f"❌ An error occurred: {error_msg}"
 

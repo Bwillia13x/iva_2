@@ -3,7 +3,20 @@ import re
 from datetime import datetime, UTC
 from importlib import resources
 from ..models.sources import AdapterFinding, Citation
-_CORP_SUFFIXES = {"inc", "incorporated", "corp", "corporation", "company", "co", "ltd", "limited", "llc", "plc"}
+_CORP_SUFFIXES = {
+    "inc",
+    "incorporated",
+    "corp",
+    "corporation",
+    "company",
+    "co",
+    "ltd",
+    "limited",
+    "llc",
+    "plc",
+    "global",
+    "technologies",
+}
 
 def _normalize_company(name: str) -> str:
     if not name:

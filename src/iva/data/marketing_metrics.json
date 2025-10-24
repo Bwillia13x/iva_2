@@ -12,5 +12,47 @@
         "as_of": "2023-12-31"
       }
     ]
+  },
+  {
+    "company": "Square",
+    "metrics": [
+      {
+        "key": "gpv_2023",
+        "value": "$217.6B gross payment volume in 2023",
+        "status": "confirmed",
+        "summary": "Square's seller ecosystem processed $217.6B in GPV during fiscal year 2023.",
+        "source_url": "https://s29.q4cdn.com/628966176/files/doc_financials/2023/q4/Shareholder-Letter-Q4-2023.pdf",
+        "source_name": "Block Q4 2023 Shareholder Letter",
+        "as_of": "2023-12-31"
+      }
+    ]
+  },
+  {
+    "company": "Coinbase Global",
+    "metrics": [
+      {
+        "key": "assets_on_platform_q4_2023",
+        "value": "$193B assets on platform (Q4 2023)",
+        "status": "confirmed",
+        "summary": "Coinbase reported $193B in assets on platform at the end of Q4 2023.",
+        "source_url": "https://s27.q4cdn.com/397450999/files/doc_financials/2023/q4/Shareholder-Letter-Q4-2023.pdf",
+        "source_name": "Coinbase Q4 2023 Shareholder Letter",
+        "as_of": "2023-12-31"
+      }
+    ]
+  },
+  {
+    "company": "SoFi Technologies",
+    "metrics": [
+      {
+        "key": "members_q4_2023",
+        "value": "7.5M total members (Q4 2023)",
+        "status": "confirmed",
+        "summary": "SoFi closed 2023 with 7.5 million members, up 44% year-over-year.",
+        "source_url": "https://investors.sofi.com/press-releases/press-release-details/2024/SoFi-Technologies-Inc.-Reports-Fourth-Quarter-and-Full-Year-2023-Results/default.aspx",
+        "source_name": "SoFi Q4 2023 Earnings Release",
+        "as_of": "2023-12-31"
+      }
+    ]
   }
 ]

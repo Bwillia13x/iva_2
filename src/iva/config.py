@@ -7,7 +7,7 @@ load_dotenv()
 
 class Settings(BaseModel):
     openai_api_key: str = Field(default_factory=lambda: os.getenv("OPENAI_API_KEY",""))
-    openai_model_code: str = os.getenv("OPENAI_MODEL_CODE","gpt-5codex")
+    openai_model_code: str = os.getenv("OPENAI_MODEL_CODE","chatgpt5codex")
     openai_model_reasoning: str = os.getenv("OPENAI_MODEL_REASONING","chatgpt5thinking")
     embedding_model: str = os.getenv("EMBEDDING_MODEL","text-embedding-3-large")
 

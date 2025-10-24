@@ -16,6 +16,7 @@ _CORP_SUFFIXES = {
     "plc",
     "global",
     "technologies",
+    "holdings",
 }
 
 def _normalize_company(name: str) -> str:

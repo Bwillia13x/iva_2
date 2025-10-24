@@ -16,11 +16,11 @@ def test_press_metrics_normalizes_company_names():
             "Square Inc.",
             "The Square, Inc.",
         ],
-        "Coinbase": [
-            "Coinbase",
-            "Coinbase Global",
-            "Coinbase Global Inc.",
-            "Coinbase, Inc.",
+        "PayPal": [
+            "PayPal",
+            "PayPal Holdings",
+            "PayPal Holdings Inc.",
+            "PayPal, Inc.",
         ],
         "SoFi": [
             "SoFi",

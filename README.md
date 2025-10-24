@@ -277,7 +277,7 @@ PYTHONPATH=. pytest tests/e2e/test_pipeline.py -q
 
 The project includes a golden dataset (`src/iva/eval/datasets/`) with compact JSONL cases. Each entry pairs expected discrepancies, verdicts, and confidence ranges so regression runs can flag drift automatically. Extend this file when adding new discrepancy types or severity tiers.
 
-Complementary seeds under `src/iva/data/` (e.g., `marketing_metrics.json`) capture vetted press metrics for high-profile fintechs such as Stripe, Square, Coinbase, and SoFi to confirm payment-volume or customer-count claims during reconciliation.
+Complementary seeds under `src/iva/data/` (e.g., `marketing_metrics.json`) capture vetted press metrics for high-profile fintechs such as Stripe, Square, PayPal, and SoFi to confirm payment-volume or customer-count claims during reconciliation.
 
 ---
 

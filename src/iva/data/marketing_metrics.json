@@ -28,15 +28,15 @@
     ]
   },
   {
-    "company": "Coinbase Global",
+    "company": "PayPal Holdings",
     "metrics": [
       {
-        "key": "assets_on_platform_q4_2023",
-        "value": "$193B assets on platform (Q4 2023)",
+        "key": "tpv_2023",
+        "value": "$1.53T total payment volume in 2023",
         "status": "confirmed",
-        "summary": "Coinbase reported $193B in assets on platform at the end of Q4 2023.",
-        "source_url": "https://s27.q4cdn.com/397450999/files/doc_financials/2023/q4/Shareholder-Letter-Q4-2023.pdf",
-        "source_name": "Coinbase Q4 2023 Shareholder Letter",
+        "summary": "PayPal processed $1.53 trillion in total payment volume during fiscal year 2023.",
+        "source_url": "https://s26.q4cdn.com/126002989/files/doc_financials/2023/q4/PayPal-Q4-2023-Update.pdf",
+        "source_name": "PayPal Q4 2023 Investor Update",
         "as_of": "2023-12-31"
       }
     ]

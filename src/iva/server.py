@@ -137,6 +137,9 @@ def get_user_friendly_error(error_msg: str, url: str) -> str:
     if "rate limit" in error_lower:
         return "⚡ API rate limit exceeded. Please wait a moment and try again."
     
+    if "playwright" in error_lower or "browsertype.launch" in error_lower or "missing dependencies to run browsers" in error_lower:
+        return "🌐 JavaScript rendering is not available in this environment.\n\nThe 'Render JS' option requires browser dependencies that aren't installed. Please uncheck the 'Render JS' checkbox and try again - standard HTML fetching works well for most websites and still extracts comprehensive claims."
+    
     # Keep multiline formatting with plain text newlines (CSS will handle display)
     if len(error_msg) > 300:
         return f"❌ An error occurred during analysis:\n{error_msg[:300]}...\n\nPlease try again or contact support if the issue persists."

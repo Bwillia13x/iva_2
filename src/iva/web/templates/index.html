@@ -181,7 +181,7 @@
       document.querySelector('input[name="url"]').value = url;
       document.querySelector('input[name="company"]').value = company;
       document.querySelector('select[name="jurisdiction"]').value = 'US';
-      document.querySelector('input[name="render_js"]').checked = true;
+      document.querySelector('input[name="render_js"]').checked = false; // Use standard HTML fetching
       window.scrollTo({ top: 0, behavior: 'smooth' });
       
       // Auto-submit after 500ms delay so user sees fields populate

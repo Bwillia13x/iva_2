@@ -97,10 +97,11 @@ Suggested outreach: "Could you share your NMLS roster and SOC 2 letter?"
 ### Why This Stack?
 
 - **FastAPI**: High-performance async framework perfect for I/O-bound operations (web scraping + API calls)
-- **gpt-5-codex**: Optimized for structured data extraction from unstructured web content
-- **gpt-5-thinking**: Advanced reasoning for nuanced claim reconciliation and severity assessment
+- **gpt-5-codex & gpt-5-thinking**: Latest GPT-5 models with Responses API for advanced reasoning and structured extraction
 - **Playwright**: Handles JavaScript-rendered SPAs that traditional scrapers miss
 - **Modular Adapters**: Each data source is isolated, making it easy to add new regulators or jurisdictions
+
+**Note**: The application supports both GPT-5 models (via Responses API) and GPT-4 models (via Chat Completions API) automatically.
 
 ---
 
@@ -281,8 +282,8 @@ The project includes a golden dataset (`src/iva/eval/datasets/`) with known-good
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `OPENAI_API_KEY` | ✅ | - | OpenAI API key for GPT-5 models |
-| `OPENAI_MODEL_CODE` | ❌ | `gpt-5-codex` | Model for structured extraction tasks |
-| `OPENAI_MODEL_REASONING` | ❌ | `gpt-5-thinking` | Model for reasoning and reconciliation |
+| `OPENAI_MODEL_CODE` | ❌ | `gpt-5-codex` | Model for structured extraction (GPT-5 Codex via Responses API) |
+| `OPENAI_MODEL_REASONING` | ❌ | `gpt-5-thinking` | Model for reasoning (GPT-5 Thinking via Responses API) |
 | `SLACK_WEBHOOK_URL` | ❌ | - | Slack webhook for posting results |
 | `SLACK_BOT_TOKEN` | ❌ | - | Alternative: Slack bot token |
 | `SLACK_CHANNEL` | ❌ | - | Slack channel for notifications |

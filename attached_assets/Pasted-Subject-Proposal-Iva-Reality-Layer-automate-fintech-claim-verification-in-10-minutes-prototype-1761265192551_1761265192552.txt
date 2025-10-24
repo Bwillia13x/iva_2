@@ -1,0 +1,50 @@
+Subject: Proposal: Iva Reality Layer — automate fintech claim verification in <10 minutes (prototype + demo)
+
+Hi Impression Ventures team,
+
+I’m excited to share a focused, 90-day enhancement to Iva that turns fintech claim verification from a 60–90 minute manual task into a <10-minute, evidence-backed workflow.
+
+TL;DR
+- What: Iva Reality Layer (Claim-to-Fact Truth Meter) that extracts claims from company materials and reconciles them against authoritative sources (NMLS, FINTRAC, EDGAR, CFPB, sponsor bank pages, trust centers), outputting severity-rated “truth cards” with confidence scores and exact citations.
+- Why it matters: Catches licensing gaps, overstated partner claims, and security-cert discrepancies before partner time is spent—raising screening precision and reducing late-stage red flags.
+- Proof: Working prototype with end-to-end pipeline and Slack-ready output.
+
+Links
+- Live demo: https://iva-2-bdrewwilliams.replit.app/ (click “Try Demo”)
+- GitHub: https://github.com/Bwillia13x/iva_2.git
+- Attached: One-pager PDF (Iva Reality Layer — 90-Day Enhancement Proposal)
+
+Expected impact
+- Time: 60–90 minutes down to <10 minutes per company (average across 100 tests)
+- Quality: ≥85% partner-confirmed accuracy on high-severity flags; 10–20% lift in screening precision@K
+- Risk: ~20% fewer late-stage red flags discovered post-term sheet
+- Trust: Every output includes source URLs, query parameters, and timestamps (advisory; not legal advice)
+
+What you’ll see in the demo
+- “Paste a URL → receive a cited truth card” in minutes
+- High-severity examples: overstated state license counts, missing sponsor bank listings, SOC 2 claims without auditor proof
+- Slack-compatible summary with outreach prompts for founders
+
+90-day build plan (at a glance)
+- Weeks 1–2: Define claim taxonomy and severity rubric; assemble a golden set mapped to your 8k-company history; provenance/audit logging
+- Weeks 3–6: Claim extraction, adapters (NMLS, FINTRAC, EDGAR, CFPB, bank partner pages, trust centers), reconciliation and scoring, Slack UX
+- Weeks 7–12: Calibrate thresholds to your outcomes, integrate memo blocks and DFMS write-back, pilot on live deals, harden, and train the team
+- Guardrails: VPC deployment, PII redaction, robots/TOS-aware crawls, immutable provenance; human-in-the-loop review
+
+High-ROI follow-on builds after Reality Layer
+- License Roadmap Planner: Given product/geo/GTM, generate an exact licensing pathway (e.g., MTL vs. agent-of-bank vs. PayFac), time/cost ranges, and a task list. Impact: accelerates founder diligence and reduces early compliance ambiguity. Effort: ~4–6 weeks once the Reality Layer sources and taxonomy exist.
+- Partner Bank Risk Lens: Score BaaS/sponsor banks on enforcement history, capacity, balance sheet/stability, and exit risk; propose backups and transition risks. Impact: reduces concentration/regulatory exposure in payments/card programs. Effort: ~3–5 weeks leveraging the same adapters and reconciliation logic.
+- Early-Warning Alt-Signal Sentinel (portfolio): Monitor API uptime, security headers, subprocessor shifts, hiring deltas, and review sentiment to alert on churn/breach risk weeks earlier. Impact: proactive board support and reduced surprise downside. Effort: ~4–6 weeks on top of existing ingest and verification.
+
+If helpful, I can run a 30-minute working session to:
+- Walk through the live demo and severity rubric
+- Align on the golden dataset for calibration
+- Pilot the Reality Layer on 2–3 active deals next week (Slack + DFMS integration)
+
+Thanks for the consideration. I built this because I’m genuinely excited about making venture more systematic—and I’d love to build it with you.
+
+Best,
+Drew Williams
+GitHub: https://github.com/Bwillia13x/iva_2.git
+Live Demo: https://iva-2-bdrewwilliams.replit.app/
+Attachment: iva_reality_layer_pitch_20251024000955.pdf

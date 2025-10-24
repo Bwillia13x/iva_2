@@ -43,7 +43,8 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                         confidence=conf,
                         why_it_matters="Compliance and go-to-market risk; may impact money movement and onboarding.",
                         expected_evidence="NMLS roster export or auditor letter with current state licenses.",
-                        findings=findings
+                        findings=findings,
+                        claim_text=cl.claim_text
                     ))
         if cl.category == "partner_bank":
             bank_findings = adapter_results.get("bank_partners",[]) + adapter_results.get("news",[])
@@ -58,7 +59,8 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                     confidence=conf,
                     why_it_matters="Sponsor bank claims require verification; affects issuing and compliance.",
                     expected_evidence="Bank partner page listing or joint press release.",
-                    findings=bank_findings
+                    findings=bank_findings,
+                    claim_text=cl.claim_text
                 ))
         # SECURITY CERTIFICATIONS
         if cl.category == "security":
@@ -76,7 +78,8 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                         confidence=conf,
                         why_it_matters="Unverified SOC 2 claim can be misleading; request auditor letter or trust center link.",
                         expected_evidence="SOC 2 Type II auditor letter (date, scope) or trust center reference.",
-                        findings=sec_findings
+                        findings=sec_findings,
+                        claim_text=cl.claim_text
                     ))
             
             # Check ISO certifications
@@ -91,7 +94,8 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                         confidence=conf,
                         why_it_matters="ISO certification claims should be verifiable through certificate registries.",
                         expected_evidence="ISO certificate number or listing in certification body database.",
-                        findings=sec_findings
+                        findings=sec_findings,
+                        claim_text=cl.claim_text
                     ))
             
             # Check PCI DSS claims
@@ -105,7 +109,8 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                     confidence=conf,
                     why_it_matters="PCI DSS compliance level should be verified with QSA attestation.",
                     expected_evidence="PCI DSS Attestation of Compliance (AOC) or QSA letter with level and date.",
-                    findings=sec_findings
+                    findings=sec_findings,
+                    claim_text=cl.claim_text
                 ))
         
         # MARKETING CLAIMS - Flag unverifiable or exaggerated claims
@@ -125,7 +130,8 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                         confidence=conf,
                         why_it_matters="Customer counts are often marketing puffery; verify against SEC filings or audited reports.",
                         expected_evidence="SEC 10-K/10-Q user metrics or audited customer count statement.",
-                        findings=market_findings
+                        findings=market_findings,
+                        claim_text=cl.claim_text
                     ))
             
             # Check transaction volume claims - only flag if NOT confirmed
@@ -141,7 +147,8 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                         confidence=conf,
                         why_it_matters="Transaction volumes should be verified against regulatory filings or audited statements.",
                         expected_evidence="SEC filing with payment volume metrics or press release with audited figures.",
-                        findings=market_findings
+                        findings=market_findings,
+                        claim_text=cl.claim_text
                     ))
             
             # Check vague claims like "leading", "fastest"
@@ -156,7 +163,8 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                     confidence=conf,
                     why_it_matters="Superlative marketing claims ('leading', 'best') are subjective and often unsubstantiated.",
                     expected_evidence="Independent market research, industry report, or specific metric defining 'leading' status.",
-                    findings=market_findings
+                    findings=market_findings,
+                    claim_text=cl.claim_text
                 ))
         
         # REGULATORY CLAIMS
@@ -176,7 +184,8 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                         confidence=conf,
                         why_it_matters="SEC registration can be verified through EDGAR; false claims are serious violations.",
                         expected_evidence="CIK number and EDGAR filing history for RIA, BD, or other registration.",
-                        findings=reg_findings
+                        findings=reg_findings,
+                        claim_text=cl.claim_text
                     ))
         
         # COMPLIANCE CLAIMS
@@ -194,7 +203,8 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                     confidence=conf,
                     why_it_matters="AML/KYC programs should be documented and verifiable; vague mentions are red flags.",
                     expected_evidence="AML policy document, compliance program description, or regulatory examination results.",
-                    findings=comp_findings
+                    findings=comp_findings,
+                    claim_text=cl.claim_text
                 ))
             
             # Check GDPR/CCPA claims
@@ -208,7 +218,8 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                     confidence=conf,
                     why_it_matters="Privacy compliance should be documented in privacy policy with specific measures.",
                     expected_evidence="Privacy policy with GDPR/CCPA-specific rights, DPO contact, or privacy certification.",
-                    findings=comp_findings
+                    findings=comp_findings,
+                    claim_text=cl.claim_text
                 ))
     sev_counts = {"high":0,"med":0,"low":0}
     for d in discrepancies: sev_counts[d.severity]+=1

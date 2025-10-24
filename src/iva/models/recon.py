@@ -11,6 +11,7 @@ class Discrepancy(BaseModel):
     why_it_matters: str
     expected_evidence: str
     findings: List[AdapterFinding]
+    claim_text: Optional[str] = None
 
 class TruthCard(BaseModel):
     url: str

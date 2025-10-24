@@ -7,6 +7,7 @@ TPL = Template("""
 {% for d in discrepancies %}
 <div>
   <b>{{ d.type }}</b> ({{ d.severity }}, {{ (d.confidence*100)|round }}%):
+  {% if d.claim_text %}<div><b>Claim:</b> "{{ d.claim_text }}"</div>{% endif %}
   <div>Why: {{ d.why_it_matters }}</div>
   <div>Expected evidence: {{ d.expected_evidence }}</div>
   <div>Findings:

@@ -1,0 +1,174 @@
+Stripe Inc.
+Truth Card
+H:0 • M:0 • L:3 • Conf 80.0%
+ℹ️
+marketing_metric_unverified (sev low, conf 50.0%)
+Why it matters: Customer counts are often marketing puffery; verify against SEC filings or audited reports.
+Expected evidence: SEC 10-K/10-Q user metrics or audited customer count statement.
+• sec_filings_recent = 0 (not_found)
+• press_partner_announcement = (not_found)
+ℹ️
+marketing_metric_unverified (sev low, conf 50.0%)
+Why it matters: Transaction volumes should be verified against regulatory filings or audited statements.
+Expected evidence: SEC filing with payment volume metrics or press release with audited figures.
+• sec_filings_recent = 0 (not_found)
+• press_partner_announcement = (not_found)
+ℹ️
+marketing_metric_unverified (sev low, conf 50.0%)
+Why it matters: Transaction volumes should be verified against regulatory filings or audited statements.
+Expected evidence: SEC filing with payment volume metrics or press release with audited figures.
+• sec_filings_recent = 0 (not_found)
+• press_partner_announcement = (not_found)
+Memo HTML
+Copy
+Iva Truth Meter — Stripe Inc.
+URL: https://stripe.com
+Summary: H:0 • M:0 • L:3
+Confidence: 80%
+
+marketing_metric_unverified (low, 50.0%):
+Why: Customer counts are often marketing puffery; verify against SEC filings or audited reports.
+Expected evidence: SEC 10-K/10-Q user metrics or audited customer count statement.
+Findings:
+sec_filings_recent = 0 (not_found) — SEC EDGAR (stub)
+press_partner_announcement = (not_found) — News search (stub)
+marketing_metric_unverified (low, 50.0%):
+Why: Transaction volumes should be verified against regulatory filings or audited statements.
+Expected evidence: SEC filing with payment volume metrics or press release with audited figures.
+Findings:
+sec_filings_recent = 0 (not_found) — SEC EDGAR (stub)
+press_partner_announcement = (not_found) — News search (stub)
+marketing_metric_unverified (low, 50.0%):
+Why: Transaction volumes should be verified against regulatory filings or audited statements.
+Expected evidence: SEC filing with payment volume metrics or press release with audited figures.
+Findings:
+sec_filings_recent = 0 (not_found) — SEC EDGAR (stub)
+press_partner_announcement = (not_found) — News search (stub)
+Advisory only — not legal advice.
+Raw JSON
+Copy
+{
+  "url": "https://stripe.com",
+  "company": "Stripe Inc.",
+  "severity_summary": "H:0 \u2022 M:0 \u2022 L:3",
+  "discrepancies": [
+    {
+      "claim_id": "stripe-1",
+      "type": "marketing_metric_unverified",
+      "severity": "low",
+      "confidence": 0.5,
+      "why_it_matters": "Customer counts are often marketing puffery; verify against SEC filings or audited reports.",
+      "expected_evidence": "SEC 10-K/10-Q user metrics or audited customer count statement.",
+      "findings": [
+        {
+          "key": "sec_filings_recent",
+          "value": "0",
+          "status": "not_found",
+          "citations": [
+            {
+              "source": "SEC EDGAR (stub)",
+              "url": "https://www.sec.gov/edgar/search/",
+              "query": "company:Stripe Inc.",
+              "accessed_at": "2025-10-24 02:38:47.148910",
+              "note": "MVP stub"
+            }
+          ]
+        },
+        {
+          "key": "press_partner_announcement",
+          "value": "",
+          "status": "not_found",
+          "citations": [
+            {
+              "source": "News search (stub)",
+              "url": "https://news.google.com/",
+              "query": "Stripe Inc. sponsor bank partnership",
+              "accessed_at": "2025-10-24 02:38:47.472648",
+              "note": "MVP stub"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "claim_id": "stripe-2",
+      "type": "marketing_metric_unverified",
+      "severity": "low",
+      "confidence": 0.5,
+      "why_it_matters": "Transaction volumes should be verified against regulatory filings or audited statements.",
+      "expected_evidence": "SEC filing with payment volume metrics or press release with audited figures.",
+      "findings": [
+        {
+          "key": "sec_filings_recent",
+          "value": "0",
+          "status": "not_found",
+          "citations": [
+            {
+              "source": "SEC EDGAR (stub)",
+              "url": "https://www.sec.gov/edgar/search/",
+              "query": "company:Stripe Inc.",
+              "accessed_at": "2025-10-24 02:38:47.148910",
+              "note": "MVP stub"
+            }
+          ]
+        },
+        {
+          "key": "press_partner_announcement",
+          "value": "",
+          "status": "not_found",
+          "citations": [
+            {
+              "source": "News search (stub)",
+              "url": "https://news.google.com/",
+              "query": "Stripe Inc. sponsor bank partnership",
+              "accessed_at": "2025-10-24 02:38:47.472648",
+              "note": "MVP stub"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "claim_id": "stripe-3",
+      "type": "marketing_metric_unverified",
+      "severity": "low",
+      "confidence": 0.5,
+      "why_it_matters": "Transaction volumes should be verified against regulatory filings or audited statements.",
+      "expected_evidence": "SEC filing with payment volume metrics or press release with audited figures.",
+      "findings": [
+        {
+          "key": "sec_filings_recent",
+          "value": "0",
+          "status": "not_found",
+          "citations": [
+            {
+              "source": "SEC EDGAR (stub)",
+              "url": "https://www.sec.gov/edgar/search/",
+              "query": "company:Stripe Inc.",
+              "accessed_at": "2025-10-24 02:38:47.148910",
+              "note": "MVP stub"
+            }
+          ]
+        },
+        {
+          "key": "press_partner_announcement",
+          "value": "",
+          "status": "not_found",
+          "citations": [
+            {
+              "source": "News search (stub)",
+              "url": "https://news.google.com/",
+              "query": "Stripe Inc. sponsor bank partnership",
+              "accessed_at": "2025-10-24 02:38:47.472648",
+              "note": "MVP stub"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "overall_confidence": 0.8
+}
+🔄 Run Another Analysis
+© 2025 Iva
+Respect robots.txt • Use official APIs where available

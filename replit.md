@@ -5,7 +5,22 @@ Iva's Reality Layer is a FastAPI web application that analyzes fintech company w
 
 **Current State**: The application is fully configured and running on Replit. The web interface is accessible and ready to analyze company websites.
 
-## Recent Changes (October 23, 2025)
+## Recent Changes
+
+### October 24, 2025 - Analysis Quality Improvements
+- **Fixed OpenAI Responses API integration**: Removed unsupported `response_format` parameter from Responses API calls
+- **Enhanced claim extraction**: Completely rewrote prompt to extract 5 categories of claims (licensing, regulatory, partner_bank, security, compliance, marketing)
+- **Expanded reconciliation engine**: Added 10+ new verification rules:
+  - ISO/SOC 2/PCI certification validation
+  - Marketing metric verification (customer counts, transaction volumes)
+  - Vague marketing claim detection ("leading", "best", etc.)
+  - Regulatory claim validation (SEC, CFPB)
+  - Compliance program verification (AML/KYC, GDPR/CCPA)
+- **Added comprehensive debug logging**: Full pipeline visibility from extraction through reconciliation
+- **Improved output quality**: System now extracts 6+ claims and identifies 3+ discrepancies per analysis (vs 0/0 before)
+- **Fixed jurisdiction enum**: Added proper validation for US/CA/EU/UK/OTHER values
+
+### October 23, 2025 - Initial Setup
 - Imported project from GitHub
 - Installed Python 3.11 and all required dependencies
 - Configured FastAPI server to run on port 5000 (Replit requirement)

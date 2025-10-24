@@ -18,11 +18,11 @@ def json_call(prompt: str, schema: Dict[str, Any], model: str | None = None) -> 
     if _use_responses_api(model_name):
         try:
             # Use new Responses API for gpt-5-codex, gpt-5-thinking, o-series
+            # Note: Responses API doesn't support response_format - request JSON in instructions
             resp = client.responses.create(
                 model=model_name,
-                instructions="You extract fintech claims. Output strict JSON conforming to the schema.",
+                instructions=f"You extract fintech claims. Output strict JSON conforming to this schema: {json.dumps(schema)}",
                 input=prompt,
-                response_format={"type": "json_schema", "json_schema": {"name": "schema", "schema": schema, "strict": True}},
                 reasoning={"effort": "medium"}
             )
             # Parse output_text which contains the JSON

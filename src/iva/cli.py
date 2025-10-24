@@ -23,7 +23,7 @@ CLAIMS_SCHEMA = {
         "category":{"type":"string","enum":["licensing","regulatory","partner_bank","security","compliance","marketing"]},
         "claim_text":{"type":"string"},
         "entity":{"type":"string"},
-        "jurisdiction":{"type":"string"},
+        "jurisdiction":{"type":"string","enum":["US","CA","EU","UK","OTHER"]},
         "claim_kind":{"type":"string"},
         "values":{"type":"array","items":{"type":"string"}},
         "effective_date":{"type":"string"}

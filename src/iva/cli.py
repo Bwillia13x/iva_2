@@ -42,8 +42,14 @@ def verify(url: str, company: str, jurisdiction: str = "US", render_js: bool = F
 async def _verify(url: str, company: str, jurisdiction: str, render_js: bool, emit_slack: bool = True):
     html = await (fetch_rendered(url) if render_js else fetch_html(url))
     text = html_to_text(html)
-    prompt = open("src/iva/llm/prompts/extract_claims.prompt").read() + f"\nURL: {url}\nCompany: {company}\nContent:\n{text[:12000]}"
+    print(f"\n[DEBUG] Extracted {len(text)} chars from {url}")
+    
+    prompt = open("src/iva/llm/prompts/extract_claims.prompt").read() + f"\n\nURL: {url}\nCompany: {company}\nJurisdiction: {jurisdiction}\n\nCONTENT:\n{text[:12000]}"
+    print(f"[DEBUG] Sending {len(prompt)} chars to LLM for claim extraction...")
+    
     raw = json_call(prompt, CLAIMS_SCHEMA)
+    print(f"[DEBUG] LLM extracted {len(raw.get('claims', []))} claims")
+    
     claims = []
     for c in raw.get("claims", []):
         claims.append(ExtractedClaim(
@@ -58,8 +64,13 @@ async def _verify(url: str, company: str, jurisdiction: str, render_js: bool, em
             citations=[]
         ))
     claimset = ClaimSet(url=url, company=company, extracted_at=datetime.utcnow(), claims=claims)
+    
+    print(f"\n[DEBUG] Created ClaimSet with {len(claims)} claims:")
+    for i, cl in enumerate(claims[:5], 1):
+        print(f"  {i}. [{cl.category}] {cl.claim_text[:80]}...")
 
     # Adapters
+    print(f"\n[DEBUG] Running verification adapters...")
     adapters = {
         "nmls": await nmls.check_nmls(company),
         "fintrac": await fintrac.check_fintrac(company),
@@ -69,8 +80,13 @@ async def _verify(url: str, company: str, jurisdiction: str, render_js: bool, em
         "trust_center": await trust_center.check_trust_center(url),
         "news": await news.search_press(company)
     }
+    
+    for adapter_name, results in adapters.items():
+        print(f"  - {adapter_name}: {len(results)} findings")
 
+    print(f"\n[DEBUG] Reconciling claims against adapter findings...")
     card = reconcile(claimset, adapters)
+    print(f"[DEBUG] Found {len(card.discrepancies)} discrepancies")
     if emit_slack:
         await post_slack(card)
     memo_html = render_html(card)

@@ -1,8 +1,68 @@
-Given the following company URL text and metadata, extract concrete claims related to:
-- licensing/registrations (e.g., money transmitter licenses by state, FINTRAC MSB, RIA/BD)
-- partner banks/sponsors
-- security/compliance (SOC 2 Type I/II, ISO 27001, security.txt)
-- regulatory interactions (CFPB, SEC)
-- quantifiable statements ("licensed in X states", "SOC 2 certified", "partnered with Bank X")
+You are an expert fintech compliance analyst. Extract ALL verifiable claims from this company's website that could be fact-checked against authoritative sources.
 
-Return claims with entity, jurisdiction, claim_kind, values, effective_date when present. Avoid speculative content.
+CLAIM CATEGORIES TO EXTRACT:
+
+1. LICENSING & REGULATORY
+   - Money transmitter licenses (state-by-state or "licensed in X states")
+   - FINTRAC MSB registration (Canada)
+   - SEC registration (RIA, BD, transfer agent)
+   - Banking charters or registrations
+   - FCA, PRA authorizations (UK)
+   - Payment service provider licenses (EU)
+   - Any regulatory approvals or registrations
+
+2. PARTNER BANKS & SPONSORS
+   - Named partner banks (e.g., "banking services provided by X Bank")
+   - Card issuers (e.g., "cards issued by Y Bank")
+   - FDIC member banks mentioned
+   - Sponsor bank relationships
+   - Payment processor partnerships
+
+3. SECURITY & COMPLIANCE
+   - SOC 2 Type I or Type II certifications
+   - ISO 27001, ISO 9001 certifications
+   - PCI DSS compliance level
+   - Security features (encryption, 2FA, biometrics)
+   - Privacy certifications (Privacy Shield, etc.)
+   - Penetration testing or security audits mentioned
+
+4. MARKETING CLAIMS
+   - Customer counts ("trusted by X companies/users")
+   - Transaction volumes ("$X billion processed")
+   - Geographic reach ("available in X countries")
+   - Market position ("leading", "fastest growing")
+   - Uptime guarantees ("99.9% uptime")
+   - Processing times ("instant", "same-day")
+
+5. COMPLIANCE STATEMENTS
+   - AML/KYC procedures
+   - BSA compliance
+   - GDPR, CCPA compliance
+   - Regulatory reporting
+   - Fund protection mechanisms (FDIC insurance, safeguarding)
+
+6. BUSINESS CLAIMS
+   - Company founding date
+   - Headquarters location
+   - Number of employees
+   - Funding raised
+   - Valuation
+   - Notable customers or case studies
+
+EXTRACTION GUIDELINES:
+- Extract ONLY claims explicitly stated on the page, not implied
+- Include specific numbers, dates, and entity names when present
+- Mark jurisdiction as US/CA/EU/UK/OTHER based on claim context
+- For vague claims like "bank-level security", extract them but note the vagueness in claim_kind
+- Prioritize claims that are verifiable against public databases
+- Extract 5-15 claims per page (focus on most material/verifiable ones)
+
+OUTPUT FORMAT:
+- id: unique identifier (company-1, company-2, etc.)
+- category: one of [licensing, regulatory, partner_bank, security, compliance, marketing]
+- claim_text: exact claim as stated on website
+- entity: specific entity name if mentioned (bank name, regulatory body, etc.)
+- jurisdiction: US, CA, EU, UK, or OTHER
+- claim_kind: brief descriptor (e.g., "mtl_license", "customer_count", "soc2_cert")
+- values: array of key values (numbers, dates, names)
+- effective_date: if a date is mentioned (format: YYYY-MM-DD or YYYY-MM or YYYY)

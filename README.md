@@ -376,7 +376,6 @@ The project includes a golden dataset (`src/iva/eval/datasets/`) with known-good
 This is a portfolio project built to demonstrate AI-native venture capital tooling. For questions, collaboration, or feedback:
 
 - **GitHub Issues**: [Report bugs or request features](https://github.com/Bwillia13x/iva_2/issues)
-- **Email**: [Contact via GitHub profile](https://github.com/Bwillia13x)
 
 ---
 

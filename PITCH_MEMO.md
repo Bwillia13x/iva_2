@@ -23,7 +23,7 @@ I propose building a **Reality Layer** for your Iva that automates fintech compl
 | **Security Posture** | SOC 2, trust centers, security.txt, TLS config | Missing certifications, unsubstantiated claims |
 | **Regulatory Interactions** | CFPB complaints, SEC actions, state notices | Enforcement actions, complaint patterns |
 
-**Pipeline:** Ingest (scrape website) → Extract (GPT-5codex identifies claims) → Verify (query sources via adapters) → Reconcile (chatgpt5thinking flags discrepancies with severity ratings) → Report (Slack card + HTML memo)
+**Pipeline:** Ingest (scrape website) → Extract (gpt-5-codex identifies claims) → Verify (query sources via adapters) → Reconcile (gpt-5-thinking flags discrepancies with severity ratings) → Report (Slack card + HTML memo)
 
 **Confidence Methodology:** 
 - 3+ independent sources = high confidence
@@ -69,7 +69,7 @@ Suggested outreach: "Could you share your NMLS roster and SOC 2 letter?"
 🔗 **Live Demo:** [Your Replit URL] — Click "Try Demo" to test with Stripe/Plaid/any fintech  
 🔗 **GitHub:** [Your Repo URL] — Full source code with architecture
 
-**Tech Stack:** FastAPI + GPT-5codex (extraction) + chatgpt5thinking (reasoning) + Playwright (JS rendering) + multi-source adapters
+**Tech Stack:** FastAPI + gpt-5-codex (extraction) + gpt-5-thinking (reasoning) + Playwright (JS rendering) + multi-source adapters
 
 **What it demonstrates:** End-to-end pipeline (URL → truth card in <10 min), production web UI, Slack-compatible output, cited sources with timestamps
 

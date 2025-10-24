@@ -16,9 +16,9 @@
 **The Solution**: Iva transforms fintech due diligence from a manual, time-consuming process into an automated, AI-powered workflow that delivers results in under 10 minutes:
 
 1. **📥 Ingest** – Scrapes company websites (with JavaScript rendering support via Playwright)
-2. **🔍 Extract** – Uses GPT-5codex to identify licensing, partner-bank, and compliance claims
+2. **🔍 Extract** – Uses gpt-5-codex to identify licensing, partner-bank, and compliance claims
 3. **✅ Verify** – Queries authoritative sources (NMLS, FINTRAC, EDGAR, CFPB, bank partner lists)
-4. **⚖️ Reconcile** – AI reasoning (chatgpt5thinking) identifies discrepancies with severity ratings
+4. **⚖️ Reconcile** – AI reasoning (gpt-5-thinking) identifies discrepancies with severity ratings
 5. **📊 Report** – Generates truth cards and detailed HTML memos with exact citations
 
 **Result**: High-confidence, severity-rated truth cards that flag potential red flags in seconds, not days.
@@ -77,8 +77,8 @@ Suggested outreach: "Could you share your NMLS roster and SOC 2 letter?"
   ┌──────────▼─────────┐   ┌───▼────────────────┐
   │  LLM Orchestration │   │  Adapter Layer     │
   │                    │   │                    │
-  │  • GPT-5codex      │   │  • NMLS Consumer   │
-  │  • chatgpt5thinking│   │  • SEC EDGAR       │
+  │  • gpt-5-codex      │   │  • NMLS Consumer   │
+  │  • gpt-5-thinking│   │  • SEC EDGAR       │
   │  • Structured      │   │  • CFPB Database   │
   │    Extraction      │   │  • FINTRAC         │
   │  • Reasoning       │   │  • Bank Partners   │
@@ -89,7 +89,7 @@ Suggested outreach: "Could you share your NMLS roster and SOC 2 letter?"
 ### Tech Stack
 
 **Backend**: FastAPI (Python 3.11+) with async/await  
-**AI/LLM**: OpenAI API (GPT-5codex for extraction, chatgpt5thinking for reasoning)  
+**AI/LLM**: OpenAI API (gpt-5-codex for extraction, gpt-5-thinking for reasoning)  
 **Web Scraping**: Playwright (JS rendering), BeautifulSoup4, Trafilatura  
 **Templating**: Jinja2 for dynamic HTML reports  
 **Optional**: PostgreSQL + pgvector, Neo4j (disabled by default)
@@ -97,8 +97,8 @@ Suggested outreach: "Could you share your NMLS roster and SOC 2 letter?"
 ### Why This Stack?
 
 - **FastAPI**: High-performance async framework perfect for I/O-bound operations (web scraping + API calls)
-- **GPT-5codex**: Optimized for structured data extraction from unstructured web content
-- **chatgpt5thinking**: Advanced reasoning for nuanced claim reconciliation and severity assessment
+- **gpt-5-codex**: Optimized for structured data extraction from unstructured web content
+- **gpt-5-thinking**: Advanced reasoning for nuanced claim reconciliation and severity assessment
 - **Playwright**: Handles JavaScript-rendered SPAs that traditional scrapers miss
 - **Modular Adapters**: Each data source is isolated, making it easy to add new regulators or jurisdictions
 
@@ -165,7 +165,7 @@ python -m src.iva.cli eval \
 - Copy-to-clipboard for JSON and HTML reports
 
 ### 🤖 **AI-Powered Extraction**
-- GPT-5codex extracts structured claims (licensing, partnerships, security)
+- gpt-5-codex extracts structured claims (licensing, partnerships, security)
 - Handles complex, unstructured website content
 - Supports JavaScript-rendered SPAs (React, Vue, Angular)
 - Automatic claim categorization and entity resolution
@@ -281,8 +281,8 @@ The project includes a golden dataset (`src/iva/eval/datasets/`) with known-good
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
 | `OPENAI_API_KEY` | ✅ | - | OpenAI API key for GPT-5 models |
-| `OPENAI_MODEL_CODE` | ❌ | `gpt-5codex` | Model for structured extraction tasks |
-| `OPENAI_MODEL_REASONING` | ❌ | `chatgpt5thinking` | Model for reasoning and reconciliation |
+| `OPENAI_MODEL_CODE` | ❌ | `gpt-5-codex` | Model for structured extraction tasks |
+| `OPENAI_MODEL_REASONING` | ❌ | `gpt-5-thinking` | Model for reasoning and reconciliation |
 | `SLACK_WEBHOOK_URL` | ❌ | - | Slack webhook for posting results |
 | `SLACK_BOT_TOKEN` | ❌ | - | Alternative: Slack bot token |
 | `SLACK_CHANNEL` | ❌ | - | Slack channel for notifications |
@@ -293,8 +293,8 @@ The project includes a golden dataset (`src/iva/eval/datasets/`) with known-good
 
 ### Model Selection Rationale
 
-- **gpt-5codex**: Optimized for code and structured data extraction. Excels at parsing HTML, identifying patterns, and outputting JSON schemas.
-- **chatgpt5thinking**: Advanced reasoning model that can assess claim plausibility, identify nuanced discrepancies, and provide human-like explanations.
+- **gpt-5-codex**: Optimized for code and structured data extraction. Excels at parsing HTML, identifying patterns, and outputting JSON schemas.
+- **gpt-5-thinking**: Advanced reasoning model that can assess claim plausibility, identify nuanced discrepancies, and provide human-like explanations.
 
 ---
 

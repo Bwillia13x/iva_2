@@ -59,8 +59,8 @@ The application uses the following environment variables (configured in `.env`):
 - `OPENAI_API_KEY` - OpenAI API key for LLM functionality (configured in Replit Secrets)
 
 **Optional:**
-- `OPENAI_MODEL_CODE` - Model for structured extraction tasks (default: gpt-5codex)
-- `OPENAI_MODEL_REASONING` - Model for reasoning tasks (default: chatgpt5thinking)
+- `OPENAI_MODEL_CODE` - Model for structured extraction tasks (default: gpt-5-codex)
+- `OPENAI_MODEL_REASONING` - Model for reasoning tasks (default: gpt-5-thinking)
 - `SLACK_WEBHOOK_URL` or `SLACK_BOT_TOKEN` + `SLACK_CHANNEL` - For Slack notifications
 - `USE_POSTGRES`, `USE_PGVECTOR`, `USE_NEO4J` - Enable optional databases (all false by default)
 

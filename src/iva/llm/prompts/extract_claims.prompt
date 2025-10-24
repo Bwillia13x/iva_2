@@ -41,14 +41,6 @@ CLAIM CATEGORIES TO EXTRACT:
    - Regulatory reporting
    - Fund protection mechanisms (FDIC insurance, safeguarding)
 
-6. BUSINESS CLAIMS
-   - Company founding date
-   - Headquarters location
-   - Number of employees
-   - Funding raised
-   - Valuation
-   - Notable customers or case studies
-
 EXTRACTION GUIDELINES:
 - Extract ONLY claims explicitly stated on the page, not implied
 - Include specific numbers, dates, and entity names when present

@@ -112,33 +112,37 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
         if cl.category == "marketing":
             market_findings = adapter_results.get("edgar",[]) + adapter_results.get("news",[])
             
-            # Check customer count claims
+            # Check customer count claims - only flag if NOT confirmed
             if cl.claim_kind and "customer" in cl.claim_kind.lower():
-                ev = confidence_from_findings(market_findings)
-                sev, conf = score_severity(cl.category,"customer_count_unverified", ev)
-                discrepancies.append(Discrepancy(
-                    claim_id=cl.id,
-                    type="marketing_metric_unverified",
-                    severity=sev,
-                    confidence=conf,
-                    why_it_matters="Customer counts are often marketing puffery; verify against SEC filings or audited reports.",
-                    expected_evidence="SEC 10-K/10-Q user metrics or audited customer count statement.",
-                    findings=market_findings
-                ))
+                has_confirmed = any(getattr(f,'status',None)=="confirmed" for f in market_findings)
+                if not has_confirmed:
+                    ev = confidence_from_findings(market_findings)
+                    sev, conf = score_severity(cl.category,"customer_count_unverified", ev)
+                    discrepancies.append(Discrepancy(
+                        claim_id=cl.id,
+                        type="marketing_metric_unverified",
+                        severity=sev,
+                        confidence=conf,
+                        why_it_matters="Customer counts are often marketing puffery; verify against SEC filings or audited reports.",
+                        expected_evidence="SEC 10-K/10-Q user metrics or audited customer count statement.",
+                        findings=market_findings
+                    ))
             
-            # Check transaction volume claims
+            # Check transaction volume claims - only flag if NOT confirmed
             if cl.claim_kind and ("volume" in cl.claim_kind.lower() or "transaction" in cl.claim_kind.lower()):
-                ev = confidence_from_findings(market_findings)
-                sev, conf = score_severity(cl.category,"volume_unverified", ev)
-                discrepancies.append(Discrepancy(
-                    claim_id=cl.id,
-                    type="marketing_metric_unverified",
-                    severity=sev,
-                    confidence=conf,
-                    why_it_matters="Transaction volumes should be verified against regulatory filings or audited statements.",
-                    expected_evidence="SEC filing with payment volume metrics or press release with audited figures.",
-                    findings=market_findings
-                ))
+                has_confirmed = any(getattr(f,'status',None)=="confirmed" for f in market_findings)
+                if not has_confirmed:
+                    ev = confidence_from_findings(market_findings)
+                    sev, conf = score_severity(cl.category,"volume_unverified", ev)
+                    discrepancies.append(Discrepancy(
+                        claim_id=cl.id,
+                        type="marketing_metric_unverified",
+                        severity=sev,
+                        confidence=conf,
+                        why_it_matters="Transaction volumes should be verified against regulatory filings or audited statements.",
+                        expected_evidence="SEC filing with payment volume metrics or press release with audited figures.",
+                        findings=market_findings
+                    ))
             
             # Check vague claims like "leading", "fastest"
             vague_words = ["leading", "fastest", "best", "#1", "top", "premier"]

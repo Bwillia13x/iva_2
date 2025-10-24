@@ -7,7 +7,15 @@ Iva's Reality Layer is a FastAPI web application that analyzes fintech company w
 
 ## Recent Changes
 
-### October 24, 2025 - Analysis Quality Improvements
+### October 24, 2025 - Analysis Quality & UX Improvements
+
+**Phase 2: Output Quality Enhancements**
+- **Added claim text to discrepancies**: Users now see WHAT is being flagged, not just WHY it matters
+- **Enhanced HTML memo template**: Displays actual claims like "Join the millions of companies..." before verification details
+- **Enabled JavaScript rendering**: All demo buttons now use JS rendering to extract more claims from modern websites
+- **Improved actionability**: Output is now significantly more useful and understandable for non-technical users
+
+**Phase 1: Core Analysis Improvements**
 - **Fixed OpenAI Responses API integration**: Removed unsupported `response_format` parameter from Responses API calls
 - **Enhanced claim extraction**: Completely rewrote prompt to extract 5 categories of claims (licensing, regulatory, partner_bank, security, compliance, marketing)
 - **Expanded reconciliation engine**: Added 10+ new verification rules:

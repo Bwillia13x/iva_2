@@ -1,16 +1,41 @@
 {% extends "base.html" %}
 {% block content %}
+  
+  <!-- Prominent Demo Callout Box -->
+  <div class="mb-6 p-5 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200">
+    <div class="flex items-start gap-3">
+      <div class="text-3xl">👉</div>
+      <div class="flex-1">
+        <h3 class="text-lg font-semibold text-slate-900 mb-2">New here? Try a quick demo!</h3>
+        <p class="text-slate-700 mb-3">Click one of these examples to see a live analysis (takes ~30-60 seconds):</p>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" onclick="loadDemo('https://stripe.com', 'Stripe Inc.')" class="px-4 py-2 rounded-lg bg-white border-2 border-blue-300 text-slate-800 font-medium shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+            🚀 Stripe
+          </button>
+          <button type="button" onclick="loadDemo('https://plaid.com', 'Plaid Inc.')" class="px-4 py-2 rounded-lg bg-white border-2 border-blue-300 text-slate-800 font-medium shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+            🏦 Plaid
+          </button>
+          <button type="button" onclick="loadDemo('https://brex.com', 'Brex Inc.')" class="px-4 py-2 rounded-lg bg-white border-2 border-blue-300 text-slate-800 font-medium shadow-sm hover:shadow-md hover:border-blue-400 transition-all">
+            💳 Brex
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="grid md:grid-cols-2 gap-8">
     <section>
       <h2 class="text-xl font-semibold text-slate-900 mb-4">Run Truth Meter</h2>
-      <form action="/run" method="post" class="space-y-4">
+      <form id="truthForm" action="/run" method="post" class="space-y-4" onsubmit="return handleSubmit(event)">
         <div>
           <label class="block text-sm font-medium text-slate-600 mb-1">Company URL</label>
-          <input required name="url" type="url" placeholder="https://example.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400/50 bg-white/70"/>
+          <input required name="url" id="urlInput" type="url" placeholder="https://example.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400/50 bg-white/70"/>
+          <p id="urlError" class="text-sm text-red-600 mt-1 hidden"></p>
         </div>
         <div>
           <label class="block text-sm font-medium text-slate-600 mb-1">Company Name</label>
-          <input required name="company" type="text" placeholder="Acme Payments Inc." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400/50 bg-white/70"/>
+          <input required name="company" id="companyInput" type="text" placeholder="Acme Payments Inc." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400/50 bg-white/70"/>
+          <p id="companyError" class="text-sm text-red-600 mt-1 hidden"></p>
         </div>
         <div class="grid grid-cols-2 gap-4">
           <div>
@@ -23,8 +48,13 @@
             </select>
           </div>
           <div class="flex items-end gap-4">
-            <label class="inline-flex items-center gap-2 text-sm text-slate-700">
-              <input type="checkbox" name="render_js" value="1" class="rounded" /> Render JS
+            <label class="inline-flex items-center gap-2 text-sm text-slate-700 relative group">
+              <input type="checkbox" name="render_js" value="1" class="rounded" /> 
+              <span>Render JS</span>
+              <span class="cursor-help">ℹ️</span>
+              <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-lg z-10">
+                Enable JavaScript rendering for sites that load content dynamically. May increase analysis time.
+              </div>
             </label>
             <label class="inline-flex items-center gap-2 text-sm text-slate-700">
               <input type="checkbox" name="send_to_slack" value="1" class="rounded" /> Send to Slack
@@ -32,25 +62,20 @@
           </div>
         </div>
         <div class="pt-2 flex gap-3">
-          <button type="submit" class="btn px-5 py-3 rounded-xl bg-black text-white shadow-sm hover:shadow-lg">Run Truth Meter</button>
-          <button type="button" onclick="loadDemo()" class="btn px-5 py-3 rounded-xl bg-white border-2 border-slate-200 text-slate-700 shadow-sm hover:shadow-lg hover:border-slate-300">✨ Try Demo</button>
+          <button type="submit" id="submitBtn" class="btn px-5 py-3 rounded-xl bg-black text-white shadow-sm hover:shadow-lg font-medium">
+            Run Truth Meter
+          </button>
         </div>
-        <p class="text-xs text-slate-500">Requires configured OPENAI_API_KEY. Slack posting is optional.</p>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <p class="text-sm text-slate-700">⏱️ <strong>Estimated time:</strong> 30-60 seconds per analysis</p>
+          <p class="text-xs text-slate-500 mt-1">Requires configured OPENAI_API_KEY. Slack posting is optional.</p>
+        </div>
       </form>
-      <script>
-        function loadDemo() {
-          document.querySelector('input[name="url"]').value = 'https://stripe.com';
-          document.querySelector('input[name="company"]').value = 'Stripe Inc.';
-          document.querySelector('select[name="jurisdiction"]').value = 'US';
-          // Scroll to form
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      </script>
     </section>
 
     <section>
       <h2 class="text-xl font-semibold text-slate-900 mb-4">About</h2>
-      <p class="text-slate-600 leading-relaxed">Iva’s Reality Layer turns claims into facts. It extracts licensing, partner-bank, and security assertions from a company’s site, checks authoritative sources, reconciles discrepancies, and produces a severity/confidence truth card and memo.</p>
+      <p class="text-slate-600 leading-relaxed">Iva's Reality Layer turns claims into facts. It extracts licensing, partner-bank, and security assertions from a company's site, checks authoritative sources, reconciles discrepancies, and produces a severity/confidence truth card and memo.</p>
       <ul class="mt-4 space-y-2 text-slate-600 text-sm">
         <li>• Ingest ➜ Extract claims ➜ Query sources ➜ Reconcile ➜ Slack card + Memo</li>
         <li>• Adapters (MVP): NMLS, FINTRAC, EDGAR, CFPB, Bank partners, Trust center, News (stubs/live mix)</li>
@@ -59,8 +84,36 @@
     </section>
   </div>
 
+  <!-- Loading Spinner -->
+  <div id="loadingSpinner" class="hidden mt-8 p-8 rounded-xl bg-white border border-slate-200 text-center">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-slate-900 mb-4"></div>
+    <h3 class="text-lg font-semibold text-slate-900 mb-2">Analyzing Company Claims...</h3>
+    <p class="text-slate-600 mb-2">This may take 30-60 seconds</p>
+    <div id="progressMessage" class="text-sm mb-3">
+      <p class="text-slate-600">📊 Extracting and analyzing claims...</p>
+    </div>
+    <div class="text-sm text-slate-500 space-y-1">
+      <p>✓ Fetching website content</p>
+      <p>✓ Extracting claims with AI</p>
+      <p>✓ Querying authoritative sources (NMLS, EDGAR, CFPB...)</p>
+      <p>✓ Reconciling discrepancies</p>
+      <p>⏳ Generating truth card and memo...</p>
+    </div>
+  </div>
+
   {% if error %}
-    <div class="mt-8 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700">{{ error }}</div>
+    <div class="mt-8 p-5 rounded-xl bg-red-50 border-2 border-red-300">
+      <div class="flex items-start gap-3">
+        <div class="text-2xl">⚠️</div>
+        <div class="flex-1">
+          <h3 class="text-lg font-semibold text-red-800 mb-2">Analysis Failed</h3>
+          <p class="text-red-700 mb-3">{{ error | safe }}</p>
+          <button onclick="location.reload()" class="px-4 py-2 rounded-lg bg-white border border-red-300 text-red-700 font-medium hover:bg-red-50">
+            Try Again
+          </button>
+        </div>
+      </div>
+    </div>
   {% endif %}
 
   {% if result %}
@@ -111,5 +164,120 @@
       </div>
     </div>
   </div>
+  
+  <!-- Run Another Analysis Button -->
+  <div class="mt-6 text-center">
+    <button onclick="location.reload()" class="btn px-6 py-3 rounded-xl bg-slate-700 text-white shadow-sm hover:shadow-lg font-medium">
+      🔄 Run Another Analysis
+    </button>
+  </div>
   {% endif %}
+
+  <script>
+    let progressInterval;
+    let progressSeconds = 0;
+    
+    function loadDemo(url, company) {
+      document.querySelector('input[name="url"]').value = url;
+      document.querySelector('input[name="company"]').value = company;
+      document.querySelector('select[name="jurisdiction"]').value = 'US';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      // Auto-submit after 500ms delay so user sees fields populate
+      setTimeout(() => {
+        document.getElementById('truthForm').submit();
+      }, 500);
+    }
+
+    function validateURL(url) {
+      try {
+        const urlObj = new URL(url);
+        if (!urlObj.protocol.match(/^https?:$/)) {
+          return 'URL must start with http:// or https://';
+        }
+        if (!urlObj.hostname || urlObj.hostname.length < 1) {
+          return 'Please enter a valid domain name';
+        }
+        // Removed localhost blocking - recruiters may test internal sites
+        return null;
+      } catch (e) {
+        return 'Please enter a valid URL (e.g., https://example.com)';
+      }
+    }
+
+    function updateProgressMessage() {
+      progressSeconds += 5;
+      const messageEl = document.getElementById('progressMessage');
+      
+      if (progressSeconds >= 90) {
+        messageEl.innerHTML = '<p class="text-amber-600 font-semibold">⏳ Still analyzing... almost done! This is taking longer than usual.</p>';
+      } else if (progressSeconds >= 60) {
+        messageEl.innerHTML = '<p class="text-slate-600">⚙️ Processing complex claims and cross-referencing sources...</p>';
+      } else if (progressSeconds >= 30) {
+        messageEl.innerHTML = '<p class="text-slate-600">🔍 Querying regulatory databases...</p>';
+      } else {
+        messageEl.innerHTML = '<p class="text-slate-600">📊 Extracting and analyzing claims...</p>';
+      }
+    }
+
+    function handleSubmit(event) {
+      const urlInput = document.getElementById('urlInput');
+      const urlError = document.getElementById('urlError');
+      const companyInput = document.getElementById('companyInput');
+      const companyError = document.getElementById('companyError');
+      const formGrid = document.querySelector('.grid.md\\:grid-cols-2');
+      
+      // Clear previous errors
+      urlError.classList.add('hidden');
+      companyError.classList.add('hidden');
+      
+      let hasError = false;
+      
+      // Validate URL
+      if (!urlInput.value.trim()) {
+        urlError.textContent = 'Please enter a company URL';
+        urlError.classList.remove('hidden');
+        hasError = true;
+      } else {
+        const validationError = validateURL(urlInput.value);
+        if (validationError) {
+          urlError.textContent = validationError;
+          urlError.classList.remove('hidden');
+          hasError = true;
+        }
+      }
+      
+      // Validate company name
+      if (!companyInput.value.trim()) {
+        companyError.textContent = 'Please enter a company name';
+        companyError.classList.remove('hidden');
+        hasError = true;
+      }
+      
+      if (hasError) {
+        event.preventDefault();
+        // Ensure form grid stays visible on validation errors
+        formGrid.style.display = '';
+        return false;
+      }
+      
+      // Hide form and show loading spinner
+      document.getElementById('truthForm').style.display = 'none';
+      formGrid.style.display = 'none';
+      document.getElementById('loadingSpinner').classList.remove('hidden');
+      
+      // Start progress updates every 5 seconds
+      progressSeconds = 0;
+      progressInterval = setInterval(updateProgressMessage, 5000);
+      
+      return true;
+    }
+    
+    // Clean up interval if page unloads
+    window.addEventListener('beforeunload', () => {
+      if (progressInterval) {
+        clearInterval(progressInterval);
+      }
+    });
+  </script>
 {% endblock %}

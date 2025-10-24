@@ -1,7 +1,7 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-Primary application code resides in `src/iva`, with domain modules such as `adapters`, `ingestion`, `llm`, `reconcile`, and the FastAPI server entry points (`server.py`, `scheduler.py`, `cli.py`). Shared schemas and models live in `src/iva/models`. Automated jobs, seeds, and helper utilities are kept in `scripts/`. Test suites are split between `tests/unit` for focused logic and `tests/e2e` for Playwright-backed flows. Supporting assets (mock documents, UX captures) are stored in `attached_assets`, while sample datasets and configuration fixtures sit under `data/`.
+Primary application code resides in `src/iva`, with domain modules such as `adapters`, `ingestion`, `llm`, `reconcile`, and the FastAPI server entry points (`server.py`, `scheduler.py`, `cli.py`). Shared schemas and models live in `src/iva/models`. Automated jobs, seeds, and helper utilities are kept in `scripts/`. Test suites are split between `tests/unit` for focused logic and `tests/e2e` for Playwright-backed flows. Supporting assets (mock documents, UX captures) are stored in `attached_assets`, while packaged reference datasets (e.g., `src/iva/data/marketing_metrics.json` for the `press_metrics` adapter) live alongside the application code.
 
 ## Build, Test, and Development Commands
 - `make dev` installs Python dependencies (preferring `uv`) and Playwright Chromium binaries.

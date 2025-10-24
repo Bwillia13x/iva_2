@@ -71,6 +71,7 @@ def test_pipeline_minimal(tmp_path: Path):
                 ],
             )
         ],
+        "press_metrics": [],
     }
     card = reconcile(cs, adapters)
     assert card.company == "Acme Payments Inc."

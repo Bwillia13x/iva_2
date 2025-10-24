@@ -34,6 +34,8 @@ class Discrepancy(BaseModel):
     claim_text: Optional[str] = None
     explanation: ExplanationBundle
     provenance: List[FindingProvenance] = Field(default_factory=list)
+    related_claims: List[str] = Field(default_factory=list)
+    related_claim_texts: List[str] = Field(default_factory=list)
 
 class TruthCard(BaseModel):
     url: str

@@ -7,10 +7,21 @@ TPL = Template("""
 {% for d in discrepancies %}
 <div>
   <b>{{ d.type }}</b> ({{ d.severity }}, {{ (d.confidence*100)|round }}%):
-  {% if d.claim_text %}<div><b>Claim:</b> "{{ d.claim_text }}"</div>{% endif %}
+  {% set claim_texts = d.related_claim_texts if d.related_claim_texts else ([d.claim_text] if d.claim_text else []) %}
+  {% if claim_texts %}
+  <div><b>Claims:</b>
+    <ul>{% for text in claim_texts %}<li>{{ text }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+  {% if d.related_claims and d.related_claims|length > 1 %}<div><b>Related claim IDs:</b> {{ d.related_claims|join(', ') }}</div>{% endif %}
   <div>Why: {{ d.why_it_matters }}</div>
   <div>Expected evidence: {{ d.expected_evidence }}</div>
   <div>Verdict: {{ d.explanation.verdict }} ({{ (d.explanation.confidence*100)|round }}%)</div>
+  {% if d.explanation.notes %}
+  <div>Notes:
+    <ul>{% for note in d.explanation.notes.split('\n') %}<li>{{ note }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
   {% if d.explanation.follow_up_actions %}
   <div>Follow-ups:
     <ul>{% for action in d.explanation.follow_up_actions %}<li>{{ action }}</li>{% endfor %}</ul>

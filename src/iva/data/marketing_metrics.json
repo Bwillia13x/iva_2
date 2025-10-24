@@ -1,0 +1,16 @@
+[
+  {
+    "company": "Stripe",
+    "metrics": [
+      {
+        "key": "payment_volume_2023",
+        "value": "$817B processed in 2023",
+        "status": "confirmed",
+        "summary": "Stripe processed $817B in payment volume globally in 2023.",
+        "source_url": "https://stripe.com/newsroom/news/stripe-2023-year-in-review",
+        "source_name": "Stripe Newsroom",
+        "as_of": "2023-12-31"
+      }
+    ]
+  }
+]

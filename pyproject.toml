@@ -5,6 +5,9 @@ description = "Iva 2.0 Reality Layer — Fintech Claim‑to‑Fact Truth Meter (
 readme = "README.txt"
 requires-python = ">=3.11"
 
+[tool.setuptools]
+include-package-data = true
+
 [tool.ruff]
 line-length = 100
 exclude = [".venv", "venv", "build", "dist"]

@@ -6,7 +6,7 @@ from .ingestion.fetch import fetch_html, fetch_rendered
 from .ingestion.parse import html_to_text
 from .llm.client import json_call
 from .models.claims import ClaimSet, ExtractedClaim
-from .adapters import nmls, fintrac, edgar, cfpb, bank_partners, trust_center, news
+from .adapters import nmls, fintrac, edgar, cfpb, bank_partners, trust_center, news, press_metrics
 from .reconcile.engine import reconcile
 from .notify.slack import post_slack
 from .notify.memo import render_html
@@ -110,7 +110,8 @@ async def _verify(url: str, company: str, jurisdiction: str, render_js: bool, em
         "cfpb": await cfpb.check_cfpb(company),
         "bank_partners": await bank_partners.check_bank_partners(company),
         "trust_center": await trust_center.check_trust_center(url),
-        "news": await news.search_press(company)
+        "news": await news.search_press(company),
+        "press_metrics": await press_metrics.check_press_metrics(company),
     }
     
     for adapter_name, results in adapters.items():

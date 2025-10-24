@@ -42,7 +42,13 @@ def _verdict_for_severity(severity: str) -> str:
         return "needs_review"
     return "monitor"
 
-def _make_explanation(severity: str, confidence: float, findings: List[AdapterFinding], follow_ups: List[str], notes: str) -> ExplanationBundle:
+def _make_explanation(
+    severity: str,
+    confidence: float,
+    findings: List[AdapterFinding],
+    follow_ups: List[str],
+    notes: str | None = None,
+) -> ExplanationBundle:
     return ExplanationBundle(
         verdict=_verdict_for_severity(severity),
         supporting_evidence=_evidence_from_findings(findings),
@@ -61,9 +67,49 @@ def _build_discrepancy(claim: ExtractedClaim, dtype: str, severity: str, confide
         expected_evidence=expected,
         findings=findings,
         claim_text=claim.claim_text,
-        explanation=_make_explanation(severity, confidence, findings, follow_ups, why),
+        explanation=_make_explanation(severity, confidence, findings, follow_ups),
         provenance=_provenance_from_findings(findings),
+        related_claims=[claim.id],
+        related_claim_texts=[claim.claim_text] if claim.claim_text else [],
     )
+
+def _fingerprint_findings(findings: List[AdapterFinding]) -> tuple:
+    return tuple(sorted((f.adapter, f.key, f.value, f.status) for f in findings))
+
+def _merge_or_add_discrepancy(discrepancies: List[Discrepancy], new_discrepancy: Discrepancy) -> None:
+    if new_discrepancy.type == "marketing_metric_unverified":
+        new_fp = _fingerprint_findings(new_discrepancy.findings)
+        for existing in discrepancies:
+            if existing.type == new_discrepancy.type and _fingerprint_findings(existing.findings) == new_fp:
+                added_claim = False
+                for idx, cid in enumerate(new_discrepancy.related_claims):
+                    if cid not in existing.related_claims:
+                        existing.related_claims.append(cid)
+                        added_claim = True
+                        if idx < len(new_discrepancy.related_claim_texts):
+                            text = new_discrepancy.related_claim_texts[idx]
+                            if text and text not in existing.related_claim_texts:
+                                existing.related_claim_texts.append(text)
+                for action in new_discrepancy.explanation.follow_up_actions:
+                    if action not in existing.explanation.follow_up_actions:
+                        existing.explanation.follow_up_actions.append(action)
+                if added_claim and new_discrepancy.claim_text:
+                    extra_note = f"Also flagged claim: {new_discrepancy.claim_text}"
+                    current_notes = existing.explanation.notes or ""
+                    if extra_note not in current_notes:
+                        existing.explanation.notes = (current_notes + ("\n" if current_notes else "") + extra_note) or extra_note
+                return
+    discrepancies.append(new_discrepancy)
+
+def _has_confirmed_metric(findings: List[AdapterFinding], keywords: List[str]) -> bool:
+    keyword_set = [kw.lower() for kw in keywords]
+    for f in findings:
+        if getattr(f, "status", "") != "confirmed":
+            continue
+        haystack = " ".join(filter(None, [getattr(f, "key", ""), getattr(f, "value", ""), getattr(f, "snippet", "")])).lower()
+        if any(kw in haystack for kw in keyword_set):
+            return True
+    return False
 
 def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
     """
@@ -191,15 +237,20 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
         
         # MARKETING CLAIMS - Flag unverifiable or exaggerated claims
         if cl.category == "marketing":
-            market_findings = adapter_results.get("edgar",[]) + adapter_results.get("news",[])
+            market_findings = (
+                adapter_results.get("edgar",[])
+                + adapter_results.get("news",[])
+                + adapter_results.get("press_metrics",[])
+            )
+            kind_text = " ".join(filter(None, [cl.claim_kind, cl.claim_text])).lower()
             
             # Check customer count claims - only flag if NOT confirmed
-            if cl.claim_kind and "customer" in cl.claim_kind.lower():
-                has_confirmed = any(getattr(f,'status',None)=="confirmed" for f in market_findings)
+            if "customer" in kind_text or "user" in kind_text:
+                has_confirmed = _has_confirmed_metric(market_findings, ["customer", "user", "merchant"])
                 if not has_confirmed:
                     ev = confidence_from_findings(market_findings)
                     sev, conf = score_severity(cl.category,"marketing_metric_unverified", ev)
-                    discrepancies.append(_build_discrepancy(
+                    new_disc = _build_discrepancy(
                         claim=cl,
                         dtype="marketing_metric_unverified",
                         severity=sev,
@@ -211,15 +262,16 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                             "Request audited customer count from finance or strategy.",
                             "Replace claim with certified figures before publication."
                         ],
-                    ))
+                    )
+                    _merge_or_add_discrepancy(discrepancies, new_disc)
             
             # Check transaction volume claims - only flag if NOT confirmed
-            if cl.claim_kind and ("volume" in cl.claim_kind.lower() or "transaction" in cl.claim_kind.lower()):
-                has_confirmed = any(getattr(f,'status',None)=="confirmed" for f in market_findings)
+            if any(word in kind_text for word in ["volume", "transaction", "processed", "payment"]):
+                has_confirmed = _has_confirmed_metric(market_findings, ["volume", "payment", "processed", "gmv"])
                 if not has_confirmed:
                     ev = confidence_from_findings(market_findings)
                     sev, conf = score_severity(cl.category,"marketing_metric_unverified", ev)
-                    discrepancies.append(_build_discrepancy(
+                    new_disc = _build_discrepancy(
                         claim=cl,
                         dtype="marketing_metric_unverified",
                         severity=sev,
@@ -231,7 +283,8 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
                             "Gather audited payment volume from finance or data team.",
                             "Escalate marketing claim for revision until figures are confirmed."
                         ],
-                    ))
+                    )
+                    _merge_or_add_discrepancy(discrepancies, new_disc)
             
             # Check vague claims like "leading", "fastest"
             vague_words = ["leading", "fastest", "best", "#1", "top", "premier"]

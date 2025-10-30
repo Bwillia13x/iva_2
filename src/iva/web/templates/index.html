@@ -2,112 +2,190 @@
 {% block content %}
   
   <!-- Prominent Demo Callout Box -->
-  <div class="mb-6 p-5 rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200">
-    <div class="flex items-start gap-3">
-      <div class="text-3xl">👉</div>
+  <div class="mb-8 p-6 rounded-2xl bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 border-2 border-indigo-200/60 card hover:border-indigo-300 transition-all">
+    <div class="flex items-start gap-4">
+      <div class="text-4xl animate-bounce">👉</div>
       <div class="flex-1">
-        <h3 class="text-lg font-semibold text-slate-900 mb-2">New here? Try a quick demo!</h3>
-        <p class="text-slate-700 mb-3">Click one of these examples to see a live analysis (takes ~30-60 seconds):</p>
-        <div class="grid sm:grid-cols-3 gap-2">
-          <button type="button" onclick="loadDemo('https://stripe.com', 'Stripe Inc.')" class="px-4 py-2 rounded-lg bg-white border-2 border-blue-300 text-slate-800 font-medium shadow-sm hover:shadow-md hover:border-blue-400 transition-all">🚀 Stripe</button>
-          <button type="button" onclick="loadDemo('https://plaid.com', 'Plaid Inc.')" class="px-4 py-2 rounded-lg bg-white border-2 border-blue-300 text-slate-800 font-medium shadow-sm hover:shadow-md hover:border-blue-400 transition-all">🏦 Plaid</button>
-          <button type="button" onclick="loadDemo('https://squareup.com', 'Square Inc.')" class="px-4 py-2 rounded-lg bg-white border-2 border-blue-300 text-slate-800 font-medium shadow-sm hover:shadow-md hover:border-blue-400 transition-all">🧾 Square</button>
-          <button type="button" onclick="loadDemo('https://www.paypal.com/us/home', 'PayPal Holdings Inc.')" class="px-4 py-2 rounded-lg bg-white border-2 border-blue-300 text-slate-800 font-medium shadow-sm hover:shadow-md hover:border-blue-400 transition-all">💸 PayPal</button>
-          <button type="button" onclick="loadDemo('https://www.marqeta.com', 'Marqeta Inc.')" class="px-4 py-2 rounded-lg bg-white border-2 border-blue-300 text-slate-800 font-medium shadow-sm hover:shadow-md hover:border-blue-400 transition-all">🌊 Marqeta</button>
-          <button type="button" onclick="loadDemo('https://www.bill.com', 'Bill.com Holdings Inc.')" class="px-4 py-2 rounded-lg bg-white border-2 border-blue-300 text-slate-800 font-medium shadow-sm hover:shadow-md hover:border-blue-400 transition-all">📈 Bill.com</button>
+        <h3 class="text-xl font-bold text-slate-900 mb-2 gradient-text">New here? Try a quick demo!</h3>
+        <p class="text-slate-700 mb-4 font-medium">Click any example to see a live analysis (takes ~30-60 seconds):</p>
+        <div class="grid sm:grid-cols-3 gap-3">
+          <button type="button" onclick="loadDemo('https://stripe.com', 'Stripe Inc.')" class="px-5 py-3 rounded-xl bg-white border-2 border-indigo-200 text-slate-800 font-semibold shadow-md hover:shadow-xl hover:border-indigo-400 hover:-translate-y-1 transition-all duration-200">
+            <span class="text-xl mr-2">🚀</span> Stripe
+          </button>
+          <button type="button" onclick="loadDemo('https://plaid.com', 'Plaid Inc.')" class="px-5 py-3 rounded-xl bg-white border-2 border-indigo-200 text-slate-800 font-semibold shadow-md hover:shadow-xl hover:border-indigo-400 hover:-translate-y-1 transition-all duration-200">
+            <span class="text-xl mr-2">🏦</span> Plaid
+          </button>
+          <button type="button" onclick="loadDemo('https://squareup.com', 'Square Inc.')" class="px-5 py-3 rounded-xl bg-white border-2 border-indigo-200 text-slate-800 font-semibold shadow-md hover:shadow-xl hover:border-indigo-400 hover:-translate-y-1 transition-all duration-200">
+            <span class="text-xl mr-2">🧾</span> Square
+          </button>
+          <button type="button" onclick="loadDemo('https://www.paypal.com/us/home', 'PayPal Holdings Inc.')" class="px-5 py-3 rounded-xl bg-white border-2 border-indigo-200 text-slate-800 font-semibold shadow-md hover:shadow-xl hover:border-indigo-400 hover:-translate-y-1 transition-all duration-200">
+            <span class="text-xl mr-2">💸</span> PayPal
+          </button>
+          <button type="button" onclick="loadDemo('https://www.marqeta.com', 'Marqeta Inc.')" class="px-5 py-3 rounded-xl bg-white border-2 border-indigo-200 text-slate-800 font-semibold shadow-md hover:shadow-xl hover:border-indigo-400 hover:-translate-y-1 transition-all duration-200">
+            <span class="text-xl mr-2">🌊</span> Marqeta
+          </button>
+          <button type="button" onclick="loadDemo('https://www.bill.com', 'Bill.com Holdings Inc.')" class="px-5 py-3 rounded-xl bg-white border-2 border-indigo-200 text-slate-800 font-semibold shadow-md hover:shadow-xl hover:border-indigo-400 hover:-translate-y-1 transition-all duration-200">
+            <span class="text-xl mr-2">📈</span> Bill.com
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="grid md:grid-cols-2 gap-8">
-    <section class="glass border border-slate-200/80 rounded-2xl p-5 bg-white/60">
-      <h2 class="text-xl font-semibold text-slate-900 mb-1">Analyze any company</h2>
-      <p class="text-sm text-slate-600 mb-4">Paste any fintech marketing site to run the same verification used in the demos.</p>
-      <form id="truthForm" action="/run" method="post" class="space-y-4" onsubmit="return handleSubmit(event)">
+  <div class="grid lg:grid-cols-5 gap-8">
+    <section class="lg:col-span-3 glass-subtle border-2 border-white/60 rounded-2xl p-6 card">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-slate-900 mb-2">Analyze any company</h2>
+        <p class="text-slate-600 font-medium">Paste any fintech marketing site to run the same verification used in the demos.</p>
+      </div>
+      
+      <form id="truthForm" action="/run" method="post" class="space-y-5" onsubmit="return handleSubmit(event)">
         <div>
-          <label class="block text-sm font-medium text-slate-600 mb-1">Company URL</label>
-          <input required name="url" id="urlInput" type="url" placeholder="https://example.com" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400/50 bg-white/70"/>
-          <p id="urlError" class="text-sm text-red-600 mt-1 hidden"></p>
+          <label class="block text-sm font-bold text-slate-700 mb-2">Company URL</label>
+          <input 
+            required 
+            name="url" 
+            id="urlInput" 
+            type="url" 
+            placeholder="https://example.com" 
+            class="w-full px-5 py-4 rounded-xl border-2 border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 bg-white font-medium text-slate-900 placeholder-slate-400 transition-all"
+          />
+          <p id="urlError" class="text-sm text-red-600 mt-2 font-medium hidden"></p>
         </div>
+        
         <div>
-          <label class="block text-sm font-medium text-slate-600 mb-1">Company Name</label>
-          <input required name="company" id="companyInput" type="text" placeholder="Acme Payments Inc." class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-slate-400/50 bg-white/70"/>
-          <p id="companyError" class="text-sm text-red-600 mt-1 hidden"></p>
+          <label class="block text-sm font-bold text-slate-700 mb-2">Company Name</label>
+          <input 
+            required 
+            name="company" 
+            id="companyInput" 
+            type="text" 
+            placeholder="Acme Payments Inc." 
+            class="w-full px-5 py-4 rounded-xl border-2 border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 bg-white font-medium text-slate-900 placeholder-slate-400 transition-all"
+          />
+          <p id="companyError" class="text-sm text-red-600 mt-2 font-medium hidden"></p>
         </div>
-        <div class="grid grid-cols-2 gap-4">
+        
+        <div class="grid sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-sm font-medium text-slate-600 mb-1">Jurisdiction</label>
-            <select name="jurisdiction" class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/70">
-              <option value="US">US</option>
-              <option value="CA">CA</option>
-              <option value="EU">EU</option>
-              <option value="UK">UK</option>
+            <label class="block text-sm font-bold text-slate-700 mb-2">Jurisdiction</label>
+            <select name="jurisdiction" class="w-full px-5 py-4 rounded-xl border-2 border-slate-200 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-indigo-500/50 transition-all cursor-pointer">
+              <option value="US">🇺🇸 United States</option>
+              <option value="CA">🇨🇦 Canada</option>
+              <option value="EU">🇪🇺 European Union</option>
+              <option value="UK">🇬🇧 United Kingdom</option>
             </select>
           </div>
-          <div class="flex items-end gap-4">
-            <label class="inline-flex items-center gap-2 text-sm text-slate-700 relative group">
-              <input type="checkbox" name="render_js" value="1" class="rounded" /> 
+          
+          <div class="flex flex-col justify-end gap-3">
+            <label class="inline-flex items-center gap-2 text-sm text-slate-700 font-medium relative group cursor-pointer">
+              <input type="checkbox" name="render_js" value="1" class="rounded w-4 h-4 cursor-pointer" /> 
               <span>Render JS</span>
               <span class="cursor-help">ℹ️</span>
-              <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-64 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-lg z-10">
+              <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-72 p-4 bg-slate-900 text-white text-xs rounded-xl shadow-2xl z-10 border border-white/10">
                 Enable JavaScript rendering for sites that load content dynamically. May increase analysis time.
               </div>
             </label>
-            <label class="inline-flex items-center gap-2 text-sm text-slate-700">
-              <input type="checkbox" name="send_to_slack" value="1" class="rounded" /> Send to Slack
+            <label class="inline-flex items-center gap-2 text-sm text-slate-700 font-medium cursor-pointer">
+              <input type="checkbox" name="send_to_slack" value="1" class="rounded w-4 h-4 cursor-pointer" /> 
+              <span>Send to Slack</span>
             </label>
           </div>
         </div>
-        <div class="pt-2 flex gap-3">
-          <button type="submit" id="submitBtn" class="btn px-5 py-3 rounded-xl bg-black text-white shadow-sm hover:shadow-lg font-medium">
-            Run Truth Meter
+        
+        <div class="pt-3">
+          <button type="submit" id="submitBtn" class="btn w-full sm:w-auto px-8 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg hover:shadow-2xl font-bold text-lg">
+            ▶ Run Truth Meter
           </button>
         </div>
-        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <p class="text-sm text-slate-700">⏱️ <strong>Estimated time:</strong> 30-60 seconds per analysis</p>
-          <p class="text-xs text-slate-500 mt-1">Requires configured OPENAI_API_KEY. Slack posting is optional.</p>
+        
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-4">
+          <p class="text-sm text-slate-700 font-medium">⏱️ <strong>Estimated time:</strong> 30-60 seconds per analysis</p>
+          <p class="text-xs text-slate-600 mt-1">Requires configured OPENAI_API_KEY. Slack posting is optional.</p>
         </div>
       </form>
     </section>
 
-    <section>
-      <h2 class="text-xl font-semibold text-slate-900 mb-4">About</h2>
-      <p class="text-slate-600 leading-relaxed">Iva's Reality Layer turns claims into facts. It extracts licensing, partner-bank, and security assertions from a company's site, checks authoritative sources, reconciles discrepancies, and produces a severity/confidence truth card and memo.</p>
-      <ul class="mt-4 space-y-2 text-slate-600 text-sm">
-        <li>• Ingest ➜ Extract claims ➜ Query sources ➜ Reconcile ➜ Slack card + Memo</li>
-        <li>• Adapters (MVP): NMLS, FINTRAC, EDGAR, CFPB, Bank partners, Trust center, News (stubs/live mix)</li>
-        <li>• Advisory only — not legal advice</li>
-      </ul>
+    <section class="lg:col-span-2">
+      <div class="glass-subtle border-2 border-white/60 rounded-2xl p-6 card h-full">
+        <h2 class="text-2xl font-bold text-slate-900 mb-4">About</h2>
+        <p class="text-slate-700 leading-relaxed font-medium mb-5">
+          Iva's Reality Layer turns claims into facts. It extracts licensing, partner-bank, and security assertions from a company's site, checks authoritative sources, reconciles discrepancies, and produces a severity/confidence truth card and memo.
+        </p>
+        <div class="space-y-3 text-slate-700 text-sm">
+          <div class="flex items-start gap-3 p-3 bg-white/60 rounded-lg">
+            <span class="text-lg">🔄</span>
+            <div>
+              <div class="font-bold text-slate-900">Pipeline</div>
+              <div class="text-xs text-slate-600">Ingest → Extract → Query → Reconcile → Report</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-3 bg-white/60 rounded-lg">
+            <span class="text-lg">🔌</span>
+            <div>
+              <div class="font-bold text-slate-900">Adapters</div>
+              <div class="text-xs text-slate-600">NMLS, FINTRAC, EDGAR, CFPB, Bank partners, Trust centers, News</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-3 bg-white/60 rounded-lg">
+            <span class="text-lg">⚖️</span>
+            <div>
+              <div class="font-bold text-slate-900">Advisory Only</div>
+              <div class="text-xs text-slate-600">Not legal advice</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 
   <!-- Loading Spinner -->
-  <div id="loadingSpinner" class="hidden mt-8 p-8 rounded-xl bg-white border border-slate-200 text-center">
-    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-slate-900 mb-4"></div>
-    <h3 class="text-lg font-semibold text-slate-900 mb-2">Analyzing Company Claims...</h3>
-    <p class="text-slate-600 mb-2">This may take 30-60 seconds</p>
-    <div id="progressMessage" class="text-sm mb-3">
-      <p class="text-slate-600">📊 Extracting and analyzing claims...</p>
+  <div id="loadingSpinner" class="hidden mt-10 p-10 rounded-2xl glass border-2 border-indigo-200 text-center result-card">
+    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 mb-6 relative">
+      <div class="absolute inset-0 rounded-full border-4 border-t-white border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
+      <svg class="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" opacity="0.25"/>
+        <path fill="currentColor" d="M12 2a10 10 0 0110 10h-2a8 8 0 00-8-8V2z" opacity="0.75"/>
+      </svg>
     </div>
-    <div class="text-sm text-slate-500 space-y-1">
-      <p>✓ Fetching website content</p>
-      <p>✓ Extracting claims with AI</p>
-      <p>✓ Querying authoritative sources (NMLS, EDGAR, CFPB...)</p>
-      <p>✓ Reconciling discrepancies</p>
-      <p>⏳ Generating truth card and memo...</p>
+    <h3 class="text-2xl font-bold text-slate-900 mb-3">Analyzing Company Claims...</h3>
+    <p class="text-slate-600 mb-4 font-medium">This may take 30-60 seconds</p>
+    <div id="progressMessage" class="text-base mb-5 font-semibold">
+      <p class="text-indigo-700">📊 Extracting and analyzing claims...</p>
+    </div>
+    <div class="text-sm text-slate-600 space-y-2 max-w-md mx-auto">
+      <div class="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
+        <span class="text-green-600">✓</span>
+        <span class="font-medium">Fetching website content</span>
+      </div>
+      <div class="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
+        <span class="text-green-600">✓</span>
+        <span class="font-medium">Extracting claims with AI</span>
+      </div>
+      <div class="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
+        <span class="text-green-600">✓</span>
+        <span class="font-medium">Querying authoritative sources (NMLS, EDGAR, CFPB...)</span>
+      </div>
+      <div class="flex items-center gap-2 p-2 bg-white/60 rounded-lg">
+        <span class="text-green-600">✓</span>
+        <span class="font-medium">Reconciling discrepancies</span>
+      </div>
+      <div class="flex items-center gap-2 p-2 bg-white/60 rounded-lg shimmer-bg">
+        <span class="text-indigo-600">⏳</span>
+        <span class="font-medium">Generating truth card and memo...</span>
+      </div>
     </div>
   </div>
 
   {% if error %}
-    <div class="mt-8 p-5 rounded-xl bg-red-50 border-2 border-red-300">
-      <div class="flex items-start gap-3">
-        <div class="text-2xl">⚠️</div>
+    <div class="mt-10 p-6 rounded-2xl bg-gradient-to-br from-red-50 to-rose-50 border-2 border-red-300 result-card">
+      <div class="flex items-start gap-4">
+        <div class="text-3xl">⚠️</div>
         <div class="flex-1">
-          <h3 class="text-lg font-semibold text-red-800 mb-2">Analysis Failed</h3>
-          <p class="text-red-700 mb-3" style="white-space: pre-line;">{{ error }}</p>
-          <button onclick="location.reload()" class="px-4 py-2 rounded-lg bg-white border border-red-300 text-red-700 font-medium hover:bg-red-50">
-            Try Again
+          <h3 class="text-xl font-bold text-red-900 mb-3">Analysis Failed</h3>
+          <p class="text-red-800 mb-4 font-medium" style="white-space: pre-line;">{{ error }}</p>
+          <button onclick="location.reload()" class="btn px-6 py-3 rounded-xl bg-white border-2 border-red-300 text-red-700 font-bold hover:bg-red-50 shadow-md">
+            🔄 Try Again
           </button>
         </div>
       </div>
@@ -118,107 +196,147 @@
   {% set high_count = result.card.discrepancies | selectattr('severity','equalto','high') | list | length %}
   {% set med_count = result.card.discrepancies | selectattr('severity','equalto','med') | list | length %}
   {% set low_count = result.card.discrepancies | selectattr('severity','equalto','low') | list | length %}
-  <div class="mt-8 space-y-6">
-    <div class="glass rounded-2xl p-5 border border-slate-200/70 bg-white/70">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+  <div class="mt-10 space-y-8">
+    <!-- Summary Card -->
+    <div class="glass-subtle rounded-2xl p-6 md:p-8 border-2 border-white/60 card result-card">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
         <div>
-          <div class="text-sm uppercase tracking-wide text-slate-500">Truth Meter Summary</div>
-          <div class="text-2xl font-semibold text-slate-900">{{ result.company }}</div>
-          <p class="text-slate-600 text-sm mt-1">Legend: H = High severity, M = Medium severity, L = Low severity discrepancies.</p>
+          <div class="text-xs uppercase tracking-widest text-indigo-600 font-bold mb-1">Truth Meter Summary</div>
+          <div class="text-3xl font-bold text-slate-900 mb-2">{{ result.company }}</div>
+          <p class="text-slate-600 text-sm font-medium">Legend: H = High severity, M = Medium severity, L = Low severity discrepancies.</p>
         </div>
-        <div class="flex gap-3">
-          <div class="text-center">
-            <div class="px-3 py-1 rounded-lg bg-rose-100 text-rose-800 font-semibold text-xs uppercase">High</div>
-            <div class="text-lg font-semibold text-slate-900 mt-1">{{ high_count }}</div>
+        
+        <div class="flex gap-4">
+          <div class="text-center px-6 py-4 bg-gradient-to-br from-red-50 to-rose-100 rounded-2xl border-2 border-red-200 card">
+            <div class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-red-500 to-rose-600 text-white font-bold text-xs uppercase tracking-wider mb-2 shadow-md">High</div>
+            <div class="text-3xl font-bold text-slate-900">{{ high_count }}</div>
           </div>
-          <div class="text-center">
-            <div class="px-3 py-1 rounded-lg bg-amber-100 text-amber-800 font-semibold text-xs uppercase">Med</div>
-            <div class="text-lg font-semibold text-slate-900 mt-1">{{ med_count }}</div>
+          <div class="text-center px-6 py-4 bg-gradient-to-br from-amber-50 to-yellow-100 rounded-2xl border-2 border-amber-200 card">
+            <div class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-600 text-white font-bold text-xs uppercase tracking-wider mb-2 shadow-md">Med</div>
+            <div class="text-3xl font-bold text-slate-900">{{ med_count }}</div>
           </div>
-          <div class="text-center">
-            <div class="px-3 py-1 rounded-lg bg-emerald-100 text-emerald-800 font-semibold text-xs uppercase">Low</div>
-            <div class="text-lg font-semibold text-slate-900 mt-1">{{ low_count }}</div>
+          <div class="text-center px-6 py-4 bg-gradient-to-br from-emerald-50 to-green-100 rounded-2xl border-2 border-emerald-200 card">
+            <div class="px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold text-xs uppercase tracking-wider mb-2 shadow-md">Low</div>
+            <div class="text-3xl font-bold text-slate-900">{{ low_count }}</div>
           </div>
         </div>
-        <div class="text-right">
-          <div class="text-sm text-slate-500">Overall confidence</div>
-          <div class="text-xl font-semibold text-slate-900">{{ (result.card.overall_confidence*100)|round }}%</div>
-          <div class="text-xs text-slate-500 mt-1">Verdict: {{ result.card.severity_summary }}</div>
+        
+        <div class="text-center lg:text-right px-6 py-4 bg-gradient-to-br from-indigo-50 to-purple-100 rounded-2xl border-2 border-indigo-200">
+          <div class="text-xs text-indigo-700 font-bold uppercase tracking-wider">Overall Confidence</div>
+          <div class="text-4xl font-bold gradient-text my-1">{{ (result.card.overall_confidence*100)|round }}%</div>
+          <div class="text-xs text-slate-600 font-semibold">{{ result.card.severity_summary }}</div>
         </div>
       </div>
     </div>
 
+    <!-- Results Grid -->
     <div class="grid lg:grid-cols-2 gap-8">
-      <div class="glass rounded-2xl p-5 border border-slate-200/70">
-        <div class="flex items-center justify-between mb-3">
+      <!-- Truth Card -->
+      <div class="glass-subtle rounded-2xl p-6 border-2 border-white/60 card result-card">
+        <div class="flex items-center justify-between mb-5 pb-4 border-b-2 border-slate-200">
           <div>
-            <div class="text-sm text-slate-500">{{ result.company }}</div>
-            <div class="text-lg font-semibold text-slate-900">Truth Card</div>
+            <div class="text-sm text-indigo-600 font-bold uppercase tracking-wide">{{ result.company }}</div>
+            <div class="text-2xl font-bold text-slate-900">Truth Card</div>
           </div>
-          <div class="text-sm text-slate-500">{{ result.card.severity_summary }} • Conf {{ (result.card.overall_confidence*100)|round }}%</div>
+          <div class="text-right">
+            <div class="text-xs text-slate-500 font-semibold">{{ result.card.severity_summary }}</div>
+            <div class="text-sm font-bold text-indigo-600">{{ (result.card.overall_confidence*100)|round }}% Conf</div>
+          </div>
         </div>
-        <div class="divide-y divide-slate-200">
+        
+        <div class="space-y-4">
           {% for d in result.card.discrepancies %}
-            <div class="py-4">
-              {% set badge_classes = 'bg-emerald-100 text-emerald-800' %}
-              {% if d.severity == 'high' %}{% set badge_classes = 'bg-rose-100 text-rose-800' %}{% elif d.severity == 'med' %}{% set badge_classes = 'bg-amber-100 text-amber-800' %}{% endif %}
-              <div class="flex items-center gap-2">
-                <div class="text-2xl">{{ sev_emoji(d.severity) }}</div>
-                <div class="font-medium text-slate-900">{{ d.type }}</div>
-                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold {{ badge_classes }} capitalize">{{ d.severity }}</span>
-                <span class="text-xs text-slate-500">Conf {{ (d.confidence*100)|round }}%</span>
+            <div class="p-5 bg-white/80 rounded-xl border-2 border-slate-100 hover:border-slate-200 transition-all">
+              {% set badge_classes = 'bg-gradient-to-r from-emerald-500 to-green-600 text-white' %}
+              {% if d.severity == 'high' %}{% set badge_classes = 'bg-gradient-to-r from-red-500 to-rose-600 text-white' %}
+              {% elif d.severity == 'med' %}{% set badge_classes = 'bg-gradient-to-r from-amber-500 to-yellow-600 text-white' %}{% endif %}
+              
+              <div class="flex items-center gap-2 mb-3">
+                <div class="text-3xl">{{ sev_emoji(d.severity) }}</div>
+                <div class="font-bold text-slate-900 text-lg flex-1">{{ d.type }}</div>
+                <span class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold {{ badge_classes }} capitalize shadow-md severity-badge">
+                  {{ d.severity }}
+                </span>
               </div>
+              
+              <div class="text-xs font-bold text-indigo-600 mb-1">Confidence: {{ (d.confidence*100)|round }}%</div>
+              
               {% if d.related_claim_texts %}
-              <div class="mt-2 text-slate-700 text-sm">
-                <span class="font-semibold text-slate-900">Claims:</span>
-                <ul class="mt-1 pl-4 list-disc space-y-1">
+              <div class="mt-3 p-3 bg-blue-50/60 rounded-lg border border-blue-200">
+                <div class="font-bold text-slate-900 text-sm mb-2">📋 Claims:</div>
+                <ul class="pl-4 list-disc space-y-1 text-sm text-slate-700">
                   {% for text in d.related_claim_texts %}
-                    <li>{{ text }}</li>
+                    <li class="font-medium">{{ text }}</li>
                   {% endfor %}
                 </ul>
               </div>
               {% endif %}
-              <div class="mt-2 text-slate-700 text-sm">Why it matters: {{ d.why_it_matters }}</div>
-              <div class="text-slate-600 text-sm">Expected evidence: {{ d.expected_evidence }}</div>
-              <ul class="mt-2 text-sm text-slate-700 space-y-1">
+              
+              <div class="mt-3 p-3 bg-amber-50/60 rounded-lg border border-amber-200">
+                <div class="font-bold text-slate-900 text-sm mb-1">💡 Why it matters:</div>
+                <div class="text-sm text-slate-700 font-medium">{{ d.why_it_matters }}</div>
+              </div>
+              
+              <div class="mt-2 text-sm text-slate-600 font-medium">
+                <span class="font-bold text-slate-900">Expected evidence:</span> {{ d.expected_evidence }}
+              </div>
+              
+              <ul class="mt-3 space-y-2">
                 {% for f in d.findings %}
-                  <li>• <span class="font-medium">{{ f.key }}</span> = {{ f.value }} <span class="text-slate-500">({{ f.status }})</span>
+                  <li class="text-sm p-2 bg-slate-50 rounded-lg border border-slate-200">
+                    <span class="font-bold text-slate-900">{{ f.key }}:</span> 
+                    <span class="text-slate-700">{{ f.value }}</span>
+                    <span class="text-indigo-600 font-semibold">({{ f.status }})</span>
                     {% if f.citations and f.citations[0].url %}
-                      <a href="{{ f.citations[0].url }}" target="_blank" rel="noopener" class="ml-2 text-blue-600 hover:text-blue-500 text-xs">Source ↗</a>
+                      <a href="{{ f.citations[0].url }}" target="_blank" rel="noopener" class="ml-2 px-2 py-1 rounded bg-indigo-100 text-indigo-700 hover:bg-indigo-200 text-xs font-semibold inline-flex items-center gap-1 transition-all">
+                        Source ↗
+                      </a>
                     {% endif %}
                   </li>
                 {% endfor %}
               </ul>
             </div>
           {% else %}
-            <div class="py-6 text-slate-500">No discrepancies flagged.</div>
+            <div class="py-10 text-center">
+              <div class="text-5xl mb-3">✅</div>
+              <div class="text-lg font-bold text-slate-900">No discrepancies flagged</div>
+              <div class="text-sm text-slate-600 mt-1">All claims appear consistent with authoritative sources</div>
+            </div>
           {% endfor %}
         </div>
       </div>
 
+      <!-- Memo & JSON -->
       <div class="space-y-6">
-        <div class="glass rounded-2xl p-5 border border-slate-200/70">
-          <div class="flex items-center justify-between mb-3">
-            <div class="text-lg font-semibold text-slate-900">Memo HTML</div>
-            <button type="button" class="btn px-3 py-1.5 rounded-lg border border-slate-200" data-copy="memoHtml" onclick="copyText('memoHtml')">Copy</button>
+        <div class="glass-subtle rounded-2xl p-6 border-2 border-white/60 card result-card">
+          <div class="flex items-center justify-between mb-4">
+            <div class="text-xl font-bold text-slate-900">📝 Memo HTML</div>
+            <button type="button" class="btn px-4 py-2 rounded-lg border-2 border-indigo-300 bg-white text-indigo-700 font-bold hover:bg-indigo-50 text-sm" data-copy="memoHtml" onclick="copyText('memoHtml')">
+              📋 Copy
+            </button>
           </div>
-          <div id="memoHtml" class="prose prose-slate max-w-none">{{ result.memo_html | safe }}</div>
+          <div id="memoHtml" class="prose prose-slate prose-sm max-w-none bg-white/60 p-5 rounded-xl border border-slate-200">
+            {{ result.memo_html | safe }}
+          </div>
         </div>
-        <div class="glass rounded-2xl p-5 border border-slate-200/70">
+        
+        <div class="glass-subtle rounded-2xl p-6 border-2 border-white/60 card result-card">
           <details open>
-            <summary class="flex items-center justify-between cursor-pointer">
-              <div class="text-lg font-semibold text-slate-900">Raw JSON</div>
-              <button type="button" class="btn px-3 py-1.5 rounded-lg border border-slate-200 ml-4" data-copy="cardJson" onclick="copyText('cardJson'); event.stopPropagation();">Copy</button>
+            <summary class="flex items-center justify-between cursor-pointer list-none">
+              <div class="text-xl font-bold text-slate-900">💾 Raw JSON</div>
+              <button type="button" class="btn px-4 py-2 rounded-lg border-2 border-indigo-300 bg-white text-indigo-700 font-bold hover:bg-indigo-50 text-sm ml-4" data-copy="cardJson" onclick="copyText('cardJson'); event.stopPropagation();">
+                📋 Copy
+              </button>
             </summary>
-            <pre id="cardJson" class="text-xs bg-white/70 rounded-xl p-3 overflow-auto mt-3">{{ result.card_json }}</pre>
+            <pre id="cardJson" class="text-xs bg-white/80 rounded-xl p-4 overflow-auto mt-4 border-2 border-slate-200 font-mono">{{ result.card_json }}</pre>
           </details>
         </div>
       </div>
     </div>
 
     <!-- Run Another Analysis Button -->
-    <div class="text-center">
-      <button onclick="location.reload()" class="btn px-6 py-3 rounded-xl bg-slate-700 text-white shadow-sm hover:shadow-lg font-medium">
+    <div class="text-center pt-4">
+      <button onclick="location.reload()" class="btn px-10 py-4 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-xl hover:shadow-2xl font-bold text-lg">
         🔄 Run Another Analysis
       </button>
     </div>
@@ -231,7 +349,7 @@
     
     function showLoadingState() {
       const form = document.getElementById('truthForm');
-      const formGrid = document.querySelector('.grid.md\\:grid-cols-2');
+      const formGrid = document.querySelector('.grid.lg\\:grid-cols-5');
       if (document.getElementById('loadingSpinner').classList.contains('hidden')) {
         if (form) form.style.display = 'none';
         if (formGrid) formGrid.style.display = 'none';
@@ -258,11 +376,10 @@
       document.querySelector('input[name="url"]').value = url;
       document.querySelector('input[name="company"]').value = company;
       document.querySelector('select[name="jurisdiction"]').value = 'US';
-      document.querySelector('input[name="render_js"]').checked = false; // Use standard HTML fetching
+      document.querySelector('input[name="render_js"]').checked = false;
       window.scrollTo({ top: 0, behavior: 'smooth' });
       showLoadingState();
       
-      // Auto-submit after 500ms delay so user sees fields populate
       setTimeout(() => {
         document.getElementById('truthForm').requestSubmit();
       }, 500);
@@ -277,7 +394,6 @@
         if (!urlObj.hostname || urlObj.hostname.length < 1) {
           return 'Please enter a valid domain name';
         }
-        // Removed localhost blocking - recruiters may test internal sites
         return null;
       } catch (e) {
         return 'Please enter a valid URL (e.g., https://example.com)';
@@ -289,13 +405,13 @@
       const messageEl = document.getElementById('progressMessage');
       
       if (progressSeconds >= 90) {
-        messageEl.innerHTML = '<p class="text-amber-600 font-semibold">⏳ Still analyzing... almost done! This is taking longer than usual.</p>';
+        messageEl.innerHTML = '<p class="text-amber-700 font-bold text-lg">⏳ Still analyzing... almost done! This is taking longer than usual.</p>';
       } else if (progressSeconds >= 60) {
-        messageEl.innerHTML = '<p class="text-slate-600">⚙️ Processing complex claims and cross-referencing sources...</p>';
+        messageEl.innerHTML = '<p class="text-indigo-700">⚙️ Processing complex claims and cross-referencing sources...</p>';
       } else if (progressSeconds >= 30) {
-        messageEl.innerHTML = '<p class="text-slate-600">🔍 Querying regulatory databases...</p>';
+        messageEl.innerHTML = '<p class="text-indigo-700">🔍 Querying regulatory databases...</p>';
       } else {
-        messageEl.innerHTML = '<p class="text-slate-600">📊 Extracting and analyzing claims...</p>';
+        messageEl.innerHTML = '<p class="text-indigo-700">📊 Extracting and analyzing claims...</p>';
       }
     }
 
@@ -304,15 +420,13 @@
       const urlError = document.getElementById('urlError');
       const companyInput = document.getElementById('companyInput');
       const companyError = document.getElementById('companyError');
-      const formGrid = document.querySelector('.grid.md\\:grid-cols-2');
+      const formGrid = document.querySelector('.grid.lg\\:grid-cols-5');
       
-      // Clear previous errors
       urlError.classList.add('hidden');
       companyError.classList.add('hidden');
       
       let hasError = false;
       
-      // Validate URL
       if (!urlInput.value.trim()) {
         urlError.textContent = 'Please enter a company URL';
         urlError.classList.remove('hidden');
@@ -326,7 +440,6 @@
         }
       }
       
-      // Validate company name
       if (!companyInput.value.trim()) {
         companyError.textContent = 'Please enter a company name';
         companyError.classList.remove('hidden');
@@ -335,21 +448,16 @@
       
       if (hasError) {
         event.preventDefault();
-        // Ensure form grid stays visible on validation errors
         formGrid.style.display = '';
         return false;
       }
       
-      // Normalize URL before submitting
       urlInput.value = normalizeUrl(urlInput.value);
-
-      // Hide form and show loading spinner
       showLoadingState();
       
       return true;
     }
     
-    // Clean up interval if page unloads
     window.addEventListener('beforeunload', () => {
       if (progressInterval) {
         clearInterval(progressInterval);

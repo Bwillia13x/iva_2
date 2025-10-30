@@ -7,62 +7,212 @@
   <title>{{ APP_NAME }}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root { --accent: 28 100% 52%; }
-    html, body { height: 100%; }
-    body { font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'SF Pro Text', Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
-    .bg-grid {
-      background-image: radial-gradient(rgba(255,255,255,0.12) 1px, transparent 1px);
-      background-size: 12px 12px;
-      background-position: -2px -2px;
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
     }
-    .glass { background: rgba(255,255,255,0.65); backdrop-filter: blur(16px); }
-    .card { box-shadow: 0 10px 40px rgba(0,0,0,0.08); border: 1px solid rgba(255,255,255,0.6); }
-    .btn { transition: transform .08s ease, box-shadow .2s ease; }
-    .btn:hover { transform: translateY(-1px); }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); }
+      50% { box-shadow: 0 0 30px rgba(99, 102, 241, 0.4); }
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
+    }
+    
+    :root { 
+      --accent: 28 100% 52%;
+      --gradient-start: #667eea;
+      --gradient-end: #764ba2;
+    }
+    
+    html, body { 
+      height: 100%;
+      scroll-behavior: smooth;
+    }
+    
+    body { 
+      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'SF Pro Text', Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background-attachment: fixed;
+    }
+    
+    .bg-pattern {
+      background-image: 
+        radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+    }
+    
+    .glass { 
+      background: rgba(255, 255, 255, 0.95); 
+      backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+    }
+    
+    .glass-subtle {
+      background: rgba(255, 255, 255, 0.6);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    
+    .card { 
+      box-shadow: 
+        0 1px 3px rgba(0,0,0,0.05),
+        0 10px 40px rgba(0,0,0,0.08),
+        0 0 0 1px rgba(255,255,255,0.4) inset;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 4px 6px rgba(0,0,0,0.07),
+        0 20px 60px rgba(0,0,0,0.12),
+        0 0 0 1px rgba(255,255,255,0.5) inset;
+    }
+    
+    .btn { 
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+    
+    .btn:hover::before {
+      left: 100%;
+    }
+    
+    .btn:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .fade-in-up {
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+    
+    .header-logo {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .shimmer-bg {
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+      background-size: 1000px 100%;
+      animation: shimmer 2s infinite;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .severity-badge {
+      font-weight: 600;
+      letter-spacing: 0.025em;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .result-card {
+      animation: fadeInUp 0.5s ease-out;
+    }
   </style>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-slate-100 via-white to-slate-100 bg-grid">
-  <header class="max-w-5xl mx-auto pt-10 px-4">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-white/70 glass grid place-content-center card">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="12" cy="12" r="10" stroke="black" stroke-opacity=".2" stroke-width="1.25"/>
-            <path d="M6 13.5 C8 9 12 7.5 18 8.5" stroke="black" stroke-opacity=".6" stroke-width="1.25" fill="none"/>
-            <circle cx="12" cy="12" r="2" fill="black" fill-opacity=".6"/>
+<body class="min-h-screen bg-pattern">
+  <header class="max-w-6xl mx-auto pt-12 px-4">
+    <div class="flex items-center justify-between flex-wrap gap-4">
+      <div class="flex items-center gap-4 fade-in-up">
+        <div class="w-12 h-12 rounded-2xl header-logo grid place-content-center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="10" stroke="white" stroke-opacity=".9" stroke-width="1.5"/>
+            <path d="M6 13.5 C8 9 12 7.5 18 8.5" stroke="white" stroke-opacity=".9" stroke-width="1.5" fill="none"/>
+            <circle cx="12" cy="12" r="2.5" fill="white" fill-opacity=".9"/>
           </svg>
         </div>
         <div>
-          <div class="text-sm tracking-widest uppercase text-slate-500">Reality Layer</div>
-          <h1 class="text-2xl font-semibold tracking-tight text-slate-900">{{ APP_NAME }}</h1>
+          <div class="text-xs tracking-[0.2em] uppercase text-white/70 font-medium">Reality Layer</div>
+          <h1 class="text-3xl font-bold tracking-tight text-white drop-shadow-lg">{{ APP_NAME }}</h1>
         </div>
       </div>
-      <div class="text-slate-500 text-sm">Advisory only — not legal advice</div>
+      <div class="glass-subtle rounded-full px-5 py-2.5 text-white text-sm font-medium backdrop-blur-xl fade-in-up">
+        💡 Advisory only — not legal advice
+      </div>
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto px-4 py-8">
-    <div class="glass card rounded-2xl p-6">
+  <main class="max-w-6xl mx-auto px-4 py-10">
+    <div class="glass card rounded-3xl p-8 md:p-10 fade-in-up">
       {% block content %}{% endblock %}
     </div>
   </main>
 
-  <footer class="max-w-5xl mx-auto px-4 pb-10 text-slate-400 text-sm">
-    <div class="flex items-center justify-between">
-      <div>© {{ 2025 }} Iva</div>
-      <div>Respect robots.txt • Use official APIs where available</div>
+  <footer class="max-w-6xl mx-auto px-4 pb-12 text-white/60 text-sm">
+    <div class="glass-subtle rounded-2xl px-6 py-4 backdrop-blur-xl">
+      <div class="flex items-center justify-between flex-wrap gap-3">
+        <div class="font-medium">© 2025 Iva</div>
+        <div class="flex items-center gap-6 text-xs">
+          <span>Respect robots.txt</span>
+          <span>•</span>
+          <span>Use official APIs where available</span>
+        </div>
+      </div>
     </div>
   </footer>
+  
   <script>
     function copyText(elId){
       const el = document.getElementById(elId); if(!el) return;
       const text = el.tagName === 'TEXTAREA' ? el.value : (el.innerText||el.textContent);
       navigator.clipboard.writeText(text).then(()=>{
         const btn = document.querySelector(`[data-copy='${elId}']`);
-        if(btn){ const t=btn.innerText; btn.innerText='Copied'; setTimeout(()=>btn.innerText=t, 1200); }
+        if(btn){ 
+          const t=btn.innerText; 
+          btn.innerText='✓ Copied'; 
+          btn.classList.add('bg-green-500', 'text-white', 'border-green-500');
+          setTimeout(()=>{
+            btn.innerText=t;
+            btn.classList.remove('bg-green-500', 'text-white', 'border-green-500');
+          }, 1500); 
+        }
       });
     }
   </script>

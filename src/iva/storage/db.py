@@ -1,9 +1,12 @@
-import asyncio, contextlib
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+import contextlib
+
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+
 from ..config import settings
 
 engine = None
 Session = None
+
 
 def init_db():
     global engine, Session
@@ -11,6 +14,7 @@ def init_db():
         return
     engine = create_async_engine(settings.postgres_dsn, echo=False, future=True)
     Session = async_sessionmaker(engine, expire_on_commit=False)
+
 
 @contextlib.asynccontextmanager
 async def get_session():

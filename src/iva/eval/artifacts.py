@@ -1,16 +1,18 @@
-import json
+from datetime import UTC, datetime
 from pathlib import Path
-from datetime import datetime, UTC
 from typing import Iterable
-from ..models.recon import TruthCard, Discrepancy
+
+from ..models.recon import Discrepancy, TruthCard
 
 try:
     from playwright.sync_api import sync_playwright  # type: ignore
 except ImportError:  # pragma: no cover - Playwright optional
     sync_playwright = None  # type: ignore
 
+
 def _slugify(value: str) -> str:
     return "".join([c.lower() if c.isalnum() else "-" for c in value]).strip("-") or "card"
+
 
 def _discrepancy_summary(discrepancies: Iterable[Discrepancy]) -> list[str]:
     lines: list[str] = []
@@ -21,6 +23,7 @@ def _discrepancy_summary(discrepancies: Iterable[Discrepancy]) -> list[str]:
         if d.explanation.follow_up_actions:
             lines.append(f"  Next: {d.explanation.follow_up_actions[0]}")
     return lines
+
 
 def _capture_with_playwright(url: str, annotations: list[str], artifact_dir: Path) -> None:
     if not sync_playwright:
@@ -60,6 +63,7 @@ def _capture_with_playwright(url: str, annotations: list[str], artifact_dir: Pat
         previous = dom_path.read_text()
         if previous != dom_html:
             import difflib
+
             diff = "\n".join(
                 difflib.unified_diff(
                     previous.splitlines(),
@@ -71,6 +75,7 @@ def _capture_with_playwright(url: str, annotations: list[str], artifact_dir: Pat
             )
             diff_path.write_text(diff or "No diff content", encoding="utf-8")
     dom_path.write_text(dom_html, encoding="utf-8")
+
 
 def generate_truthcard_artifacts(card: TruthCard, artifact_root: Path | None = None) -> Path:
     root = artifact_root or Path("attached_assets") / "e2e"

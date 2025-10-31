@@ -1,12 +1,17 @@
-import asyncio, httpx, re
+import httpx
 from playwright.async_api import async_playwright
+
 from ..config import settings
 
+
 async def fetch_html(url: str) -> str:
-    async with httpx.AsyncClient(timeout=settings.request_timeout, headers={"User-Agent": settings.user_agent}) as client:
+    async with httpx.AsyncClient(
+        timeout=settings.request_timeout, headers={"User-Agent": settings.user_agent}
+    ) as client:
         r = await client.get(url, follow_redirects=True)
         r.raise_for_status()
         return r.text
+
 
 async def fetch_rendered(url: str) -> str:
     async with async_playwright() as p:

@@ -1,13 +1,17 @@
-from typing import List, Optional
 from datetime import datetime
+from typing import List, Optional
+
 from pydantic import BaseModel, Field
+
 from .sources import AdapterFinding
+
 
 class EvidencePointer(BaseModel):
     adapter: str
     finding_key: str
     summary: str
     citation_urls: List[str] = Field(default_factory=list)
+
 
 class ExplanationBundle(BaseModel):
     verdict: str
@@ -16,12 +20,14 @@ class ExplanationBundle(BaseModel):
     follow_up_actions: List[str] = Field(default_factory=list)
     notes: Optional[str] = None
 
+
 class FindingProvenance(BaseModel):
     adapter: str
     finding_key: str
     observed_at: datetime
     snippet: Optional[str] = None
     source_urls: List[str] = Field(default_factory=list)
+
 
 class Discrepancy(BaseModel):
     claim_id: str
@@ -36,6 +42,7 @@ class Discrepancy(BaseModel):
     provenance: List[FindingProvenance] = Field(default_factory=list)
     related_claims: List[str] = Field(default_factory=list)
     related_claim_texts: List[str] = Field(default_factory=list)
+
 
 class TruthCard(BaseModel):
     url: str

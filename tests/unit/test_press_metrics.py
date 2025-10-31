@@ -1,4 +1,7 @@
 import asyncio
+from datetime import timezone
+
+UTC = timezone.utc
 from src.iva.adapters import press_metrics
 
 

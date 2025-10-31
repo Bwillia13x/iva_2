@@ -1,15 +1,18 @@
 import json
 import pathlib
 from dataclasses import dataclass
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Sequence, Any
+from typing import Any, Sequence
+
 from ..models.recon import TruthCard
+
 
 class EvaluationTier(str, Enum):
     UNIT = "unit"
     INTEGRATION = "integration"
     REGRESSION = "regression"
+
 
 @dataclass
 class EvaluationReport:
@@ -26,9 +29,11 @@ class EvaluationReport:
             "drift_alerts": self.drift_alerts,
         }
 
+
 def load_golden():
     p = pathlib.Path("src/iva/eval/datasets/golden.jsonl")
-    return [json.loads(l) for l in p.read_text().splitlines() if l.strip()]
+    return [json.loads(line) for line in p.read_text().splitlines() if line.strip()]
+
 
 def _ensure_truth_card(card: TruthCard | dict) -> TruthCard:
     if isinstance(card, TruthCard):
@@ -36,6 +41,7 @@ def _ensure_truth_card(card: TruthCard | dict) -> TruthCard:
     data = dict(card)
     data.setdefault("generated_at", datetime.now(UTC))
     return TruthCard(**data)
+
 
 def _ensure_tier(tier: str | EvaluationTier) -> EvaluationTier:
     if isinstance(tier, EvaluationTier):
@@ -45,7 +51,12 @@ def _ensure_tier(tier: str | EvaluationTier) -> EvaluationTier:
     except ValueError as exc:
         raise ValueError(f"Unknown evaluation tier: {tier}") from exc
 
-def evaluate(pred_cards: Sequence[TruthCard | dict], golden: Sequence[dict], tier: str | EvaluationTier = EvaluationTier.UNIT) -> EvaluationReport:
+
+def evaluate(
+    pred_cards: Sequence[TruthCard | dict],
+    golden: Sequence[dict],
+    tier: str | EvaluationTier = EvaluationTier.UNIT,
+) -> EvaluationReport:
     target_tier = _ensure_tier(tier)
     metrics: dict[str, float] = {}
     failures: list[str] = []
@@ -71,13 +82,19 @@ def evaluate(pred_cards: Sequence[TruthCard | dict], golden: Sequence[dict], tie
         expected_total += len(expected_discrepancies)
         predicted_map = {d.type: d for d in card.discrepancies}
 
-        if target_tier in (EvaluationTier.UNIT, EvaluationTier.INTEGRATION, EvaluationTier.REGRESSION):
+        if target_tier in (
+            EvaluationTier.UNIT,
+            EvaluationTier.INTEGRATION,
+            EvaluationTier.REGRESSION,
+        ):
             for discrepancy in card.discrepancies:
                 bundle_checks += 1
                 if discrepancy.explanation.supporting_evidence and discrepancy.provenance:
                     bundle_complete += 1
                 else:
-                    failures.append(f"{card.url}::{discrepancy.type} missing structured bundle fields")
+                    failures.append(
+                        f"{card.url}::{discrepancy.type} missing structured bundle fields"
+                    )
 
         for expected_disc in expected_discrepancies:
             dtype = expected_disc["type"]
@@ -89,11 +106,15 @@ def evaluate(pred_cards: Sequence[TruthCard | dict], golden: Sequence[dict], tie
             if target_tier in (EvaluationTier.INTEGRATION, EvaluationTier.REGRESSION):
                 expected_sev = expected_disc.get("severity")
                 if expected_sev and predicted.severity != expected_sev:
-                    failures.append(f"{card.url}::{dtype} severity {predicted.severity} != expected {expected_sev}")
+                    failures.append(
+                        f"{card.url}::{dtype} severity {predicted.severity} != expected {expected_sev}"
+                    )
             if target_tier is EvaluationTier.REGRESSION:
                 expected_verdict = expected_disc.get("verdict")
                 if expected_verdict and predicted.explanation.verdict != expected_verdict:
-                    failures.append(f"{card.url}::{dtype} verdict {predicted.explanation.verdict} != expected {expected_verdict}")
+                    failures.append(
+                        f"{card.url}::{dtype} verdict {predicted.explanation.verdict} != expected {expected_verdict}"
+                    )
 
         expected_types = set(expected_index.keys())
         for discrepancy in card.discrepancies:
@@ -110,7 +131,9 @@ def evaluate(pred_cards: Sequence[TruthCard | dict], golden: Sequence[dict], tie
                     )
 
     metrics["cards_evaluated"] = float(len(pred_cards))
-    metrics["expected_discrepancy_recall"] = matched_expected / expected_total if expected_total else 1.0
+    metrics["expected_discrepancy_recall"] = (
+        matched_expected / expected_total if expected_total else 1.0
+    )
     metrics["unexpected_high_discrepancies"] = float(unexpected_high)
     metrics["bundle_completeness"] = bundle_complete / bundle_checks if bundle_checks else 1.0
     metrics["failures"] = float(len(failures))

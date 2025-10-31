@@ -1,6 +1,7 @@
-from typing import List, Optional, Literal
-from pydantic import BaseModel, Field
 from datetime import datetime
+from typing import List, Literal, Optional
+
+from pydantic import BaseModel, Field
 
 ClaimCategory = Literal[
     "licensing",
@@ -16,14 +17,16 @@ ClaimCategory = Literal[
     "governance",
     "litigation",
     "intellectual_property",
-    "material_events"
+    "material_events",
 ]
-Jurisdiction = Literal["US","CA","EU","UK","OTHER"]
+Jurisdiction = Literal["US", "CA", "EU", "UK", "OTHER"]
+
 
 class SourceRef(BaseModel):
     name: str
     url: str
     accessed_at: datetime
+
 
 class ExtractedClaim(BaseModel):
     id: str
@@ -37,6 +40,7 @@ class ExtractedClaim(BaseModel):
     page_context: Optional[str] = None
     confidence: float = Field(ge=0, le=1, default=0.6)
     citations: List[SourceRef] = Field(default_factory=list)
+
 
 class ClaimSet(BaseModel):
     url: str

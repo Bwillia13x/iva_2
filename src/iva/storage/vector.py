@@ -1,9 +1,11 @@
 # Placeholder for pgvector integration
 from typing import Optional
+
 try:
     import numpy as np
 except Exception:  # pragma: no cover
     np = None
+
 
 def embed(text: str) -> Optional[list[float]]:
     if np is None:

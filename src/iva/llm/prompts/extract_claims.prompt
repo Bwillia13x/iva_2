@@ -41,20 +41,76 @@ CLAIM CATEGORIES TO EXTRACT:
    - Regulatory reporting
    - Fund protection mechanisms (FDIC insurance, safeguarding)
 
+6. FINANCIAL PERFORMANCE (for public companies)
+   - Revenue figures ("$X billion in revenue", "revenue grew X%")
+   - Profit/loss statements ("net income of $X", "profitable")
+   - Growth rates ("X% year-over-year growth")
+   - Financial milestones ("reached $X in revenue")
+   - EBITDA or other financial metrics
+
+7. MARKET POSITION (for public companies)
+   - Market leadership claims ("#1 in X", "leading provider")
+   - Market share ("X% market share")
+   - Industry rankings ("ranked #X by Gartner")
+   - Competitive positioning ("largest", "fastest growing")
+   - Industry awards or recognition
+
+8. BUSINESS METRICS (for public companies)
+   - User/customer counts ("X million users", "serving X customers")
+   - Transaction volumes ("$X billion in payment volume")
+   - Active users ("X million monthly active users")
+   - Retention metrics ("X% retention rate")
+   - Engagement metrics ("X million transactions per day")
+
+9. FORWARD-LOOKING STATEMENTS (for public companies)
+   - Revenue guidance ("expecting $X in revenue")
+   - Growth projections ("targeting X% growth")
+   - Future plans ("planning to expand to X markets")
+   - Strategic initiatives ("investing $X in X")
+   - Product roadmap statements
+
+10. GOVERNANCE (for public companies)
+    - Board composition ("X independent directors")
+    - ESG claims ("carbon neutral", "sustainability goals")
+    - Corporate governance practices
+    - Diversity and inclusion metrics
+    - Executive compensation disclosures
+
+11. LITIGATION (for public companies)
+    - Lawsuit mentions ("defending against X lawsuit")
+    - Legal disputes
+    - Regulatory investigations
+    - Settlement announcements
+    - Legal risk disclosures
+
+12. INTELLECTUAL PROPERTY (for public companies)
+    - Patent counts ("X patents", "patent portfolio")
+    - Trademark claims
+    - Proprietary technology claims
+    - IP licensing agreements
+
+13. MATERIAL EVENTS (for public companies)
+    - M&A announcements ("acquired X", "merger with Y")
+    - Partnerships ("strategic partnership with X")
+    - Major contract wins ("$X contract with Y")
+    - Executive changes ("new CEO", "leadership transition")
+    - Product launches ("launched X product")
+
 EXTRACTION GUIDELINES:
 - Extract ONLY claims explicitly stated on the page, not implied
 - Include specific numbers, dates, and entity names when present
 - Mark jurisdiction as US/CA/EU/UK/OTHER based on claim context
 - For vague claims like "bank-level security", extract them but note the vagueness in claim_kind
-- Prioritize claims that are verifiable against public databases
+- Prioritize claims that are verifiable against public databases (SEC filings for public companies)
 - Extract 5-15 claims per page (focus on most material/verifiable ones)
+- For public companies, prioritize financial and governance claims that can be verified against SEC filings
 
 OUTPUT FORMAT:
 - id: unique identifier (company-1, company-2, etc.)
-- category: one of [licensing, regulatory, partner_bank, security, compliance, marketing]
+- category: one of [licensing, regulatory, partner_bank, security, compliance, marketing, financial_performance, market_position, business_metrics, forward_looking, governance, litigation, intellectual_property, material_events]
 - claim_text: exact claim as stated on website
 - entity: specific entity name if mentioned (bank name, regulatory body, etc.)
 - jurisdiction: US, CA, EU, UK, or OTHER
-- claim_kind: brief descriptor (e.g., "mtl_license", "customer_count", "soc2_cert")
+- claim_kind: brief descriptor (e.g., "mtl_license", "customer_count", "soc2_cert", "revenue_growth", "market_share")
 - values: array of key values (numbers, dates, names)
 - effective_date: if a date is mentioned (format: YYYY-MM-DD or YYYY-MM or YYYY)

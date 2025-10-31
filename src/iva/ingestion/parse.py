@@ -1,13 +1,17 @@
+from io import BytesIO
+
+import httpx
 from bs4 import BeautifulSoup
 from pypdf import PdfReader
-from io import BytesIO
-import httpx
+
 
 def html_to_text(html: str) -> str:
     soup = BeautifulSoup(html, "html.parser")
-    for tag in soup(["script","style","noscript"]): tag.decompose()
+    for tag in soup(["script", "style", "noscript"]):
+        tag.decompose()
     text = " ".join(soup.get_text(" ", strip=True).split())
     return text
+
 
 async def fetch_pdf_text(url: str) -> str:
     async with httpx.AsyncClient() as client:

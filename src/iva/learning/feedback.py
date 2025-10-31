@@ -1,9 +1,10 @@
 import json
 from collections import defaultdict
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from enum import Enum
 from pathlib import Path
 from typing import Iterable
+
 from pydantic import BaseModel, Field
 
 FEEDBACK_DIR = Path("data/feedback")
@@ -11,11 +12,13 @@ EVENTS_PATH = FEEDBACK_DIR / "events.jsonl"
 ADJUSTMENTS_PATH = FEEDBACK_DIR / "rule_adjustments.json"
 PROMPT_NOTES_PATH = FEEDBACK_DIR / "prompt_overrides.md"
 
+
 class AnalystAction(str, Enum):
     CONFIRM = "confirm"
     DISMISS = "dismiss"
     OVERRIDE = "override"
     ESCALATE = "escalate"
+
 
 class FeedbackEntry(BaseModel):
     card_url: str
@@ -28,6 +31,7 @@ class FeedbackEntry(BaseModel):
     updated_verdict: str | None = None
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
+
 class FeedbackLogger:
     def __init__(self, events_path: Path = EVENTS_PATH):
         self.events_path = events_path
@@ -36,6 +40,7 @@ class FeedbackLogger:
     def log(self, entry: FeedbackEntry) -> None:
         with self.events_path.open("a", encoding="utf-8") as fh:
             fh.write(entry.model_dump_json() + "\n")
+
 
 def load_feedback(events_path: Path = EVENTS_PATH) -> list[FeedbackEntry]:
     if not events_path.exists():
@@ -48,6 +53,7 @@ def load_feedback(events_path: Path = EVENTS_PATH) -> list[FeedbackEntry]:
                 continue
             entries.append(FeedbackEntry.model_validate_json(line))
     return entries
+
 
 def compute_rule_adjustments(entries: Iterable[FeedbackEntry]) -> dict[str, dict[str, float]]:
     tally: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
@@ -67,7 +73,10 @@ def compute_rule_adjustments(entries: Iterable[FeedbackEntry]) -> dict[str, dict
         }
     return adjustments
 
-def write_rule_adjustments(adjustments: dict[str, dict[str, float]], path: Path = ADJUSTMENTS_PATH) -> None:
+
+def write_rule_adjustments(
+    adjustments: dict[str, dict[str, float]], path: Path = ADJUSTMENTS_PATH
+) -> None:
     FEEDBACK_DIR.mkdir(parents=True, exist_ok=True)
     payload = {
         "updated_at": datetime.now(UTC).isoformat(),
@@ -75,7 +84,10 @@ def write_rule_adjustments(adjustments: dict[str, dict[str, float]], path: Path 
     }
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
-def write_prompt_overrides(entries: Iterable[FeedbackEntry], path: Path = PROMPT_NOTES_PATH) -> None:
+
+def write_prompt_overrides(
+    entries: Iterable[FeedbackEntry], path: Path = PROMPT_NOTES_PATH
+) -> None:
     FEEDBACK_DIR.mkdir(parents=True, exist_ok=True)
     grouped: dict[str, list[str]] = defaultdict(list)
     for entry in list(entries)[-20:]:
@@ -100,6 +112,7 @@ def write_prompt_overrides(entries: Iterable[FeedbackEntry], path: Path = PROMPT
                 lines.append(f"- {note}")
             lines.append("")
     path.write_text("\n".join(lines).strip() + "\n", encoding="utf-8")
+
 
 def sync_feedback() -> dict[str, dict[str, float]]:
     entries = load_feedback()

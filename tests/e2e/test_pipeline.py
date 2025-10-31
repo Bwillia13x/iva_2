@@ -1,10 +1,14 @@
-from datetime import datetime, UTC
+from datetime import datetime, timezone
+
+UTC = timezone.utc
 from pathlib import Path
+
+from src.iva.eval.artifacts import generate_truthcard_artifacts
+from src.iva.eval.harness import EvaluationTier, evaluate, load_golden
 from src.iva.models.claims import ClaimSet, ExtractedClaim
 from src.iva.models.sources import AdapterFinding, Citation
 from src.iva.reconcile.engine import reconcile
-from src.iva.eval.artifacts import generate_truthcard_artifacts
-from src.iva.eval.harness import load_golden, evaluate, EvaluationTier
+
 
 def test_pipeline_minimal(tmp_path: Path):
     cs = ClaimSet(
@@ -12,7 +16,9 @@ def test_pipeline_minimal(tmp_path: Path):
         company="Acme Payments Inc.",
         extracted_at=datetime.now(UTC),
         claims=[
-            ExtractedClaim(id="1", category="licensing", claim_text="Licensed in 30 states", values=["30"]),
+            ExtractedClaim(
+                id="1", category="licensing", claim_text="Licensed in 30 states", values=["30"]
+            ),
             ExtractedClaim(id="2", category="partner_bank", claim_text="Partnered with Bank X"),
         ],
     )

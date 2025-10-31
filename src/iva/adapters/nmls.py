@@ -1,5 +1,7 @@
-from datetime import datetime, UTC
+from datetime import UTC, datetime
+
 from ..models.sources import AdapterFinding, Citation
+
 
 async def check_nmls(company: str) -> list[AdapterFinding]:
     # MVP stub: In production, implement NMLS Consumer Access scraping/search with consent and respect for TOS.
@@ -12,12 +14,14 @@ async def check_nmls(company: str) -> list[AdapterFinding]:
             adapter="nmls",
             observed_at=datetime.now(UTC),
             snippet="Stubbed NMLS dataset listing multi-state licenses.",
-            citations=[Citation(
-                source="NMLS Consumer Access (stub)",
-                url="https://nmlsconsumeraccess.org/",
-                query=f"company:{company}",
-                accessed_at=datetime.now(UTC),
-                note="MVP stub"
-            )]
+            citations=[
+                Citation(
+                    source="NMLS Consumer Access (stub)",
+                    url="https://nmlsconsumeraccess.org/",
+                    query=f"company:{company}",
+                    accessed_at=datetime.now(UTC),
+                    note="MVP stub",
+                )
+            ],
         )
     ]

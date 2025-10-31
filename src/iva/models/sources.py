@@ -1,6 +1,8 @@
-from typing import List, Optional
 from datetime import datetime
+from typing import List, Optional
+
 from pydantic import BaseModel, Field
+
 
 class Citation(BaseModel):
     source: str
@@ -8,6 +10,7 @@ class Citation(BaseModel):
     query: str
     accessed_at: datetime
     note: Optional[str] = None
+
 
 class AdapterFinding(BaseModel):
     key: str

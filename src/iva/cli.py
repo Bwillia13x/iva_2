@@ -26,7 +26,11 @@ CLAIMS_SCHEMA = {
       "type":"object",
       "properties":{
         "id":{"type":"string"},
-        "category":{"type":"string","enum":["licensing","regulatory","partner_bank","security","compliance","marketing"]},
+        "category":{"type":"string","enum":[
+            "licensing","regulatory","partner_bank","security","compliance","marketing",
+            "financial_performance","market_position","business_metrics","forward_looking",
+            "governance","litigation","intellectual_property","material_events"
+        ]},
         "claim_text":{"type":"string"},
         "entity":{"type":"string"},
         "jurisdiction":{"type":"string","enum":["US","CA","EU","UK","OTHER"]},
@@ -41,9 +45,15 @@ CLAIMS_SCHEMA = {
 }
 
 @app.command()
-def verify(url: str, company: str, jurisdiction: str = "US", render_js: bool = False):
-    # CLI default: emit Slack if configured
-    asyncio.run(_verify(url, company, jurisdiction, render_js, emit_slack=True))
+def verify(
+    url: str, 
+    company: str, 
+    jurisdiction: str = "US", 
+    ticker: str = typer.Option(None, "--ticker", "-t", help="Stock ticker symbol for public companies (e.g., AAPL)"),
+    render_js: bool = False
+):
+    """Verify claims on a company website against authoritative sources."""
+    asyncio.run(_verify(url, company, jurisdiction, render_js, emit_slack=True, ticker=ticker))
 
 @app.command("feedback")
 def log_feedback(
@@ -71,7 +81,9 @@ def log_feedback(
     adjustments = sync_feedback()
     typer.echo(f"Feedback logged. Current adjustments for {discrepancy_type}: {adjustments.get(discrepancy_type, {})}")
 
-async def _verify(url: str, company: str, jurisdiction: str, render_js: bool, emit_slack: bool = True):
+from typing import Optional
+
+async def _verify(url: str, company: str, jurisdiction: str, render_js: bool, emit_slack: bool = True, ticker: Optional[str] = None):
     html = await (fetch_rendered(url) if render_js else fetch_html(url))
     text = html_to_text(html)
     print(f"\n[DEBUG] Extracted {len(text)} chars from {url}")
@@ -103,10 +115,15 @@ async def _verify(url: str, company: str, jurisdiction: str, render_js: bool, em
 
     # Adapters
     print(f"\n[DEBUG] Running verification adapters...")
+    
+    # Import new edgar_filings adapter
+    from .adapters import edgar_filings
+    
     adapters = {
         "nmls": await nmls.check_nmls(company),
         "fintrac": await fintrac.check_fintrac(company),
         "edgar": await edgar.check_edgar(company),
+        "edgar_filings": await edgar_filings.check_edgar_filings(company, ticker=ticker) if ticker else [],
         "cfpb": await cfpb.check_cfpb(company),
         "bank_partners": await bank_partners.check_bank_partners(company),
         "trust_center": await trust_center.check_trust_center(url),

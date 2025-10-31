@@ -27,11 +27,12 @@ async def run(request: Request,
               url: str = Form(...),
               company: str = Form(...),
               jurisdiction: str = Form("US"),
+              ticker: str = Form(""),
               render_js: bool = Form(False),
               send_to_slack: bool = Form(False)):
     try:
         card, memo_html = await asyncio.wait_for(
-            _verify(url, company, jurisdiction, render_js, emit_slack=send_to_slack),
+            _verify(url, company, jurisdiction, render_js, emit_slack=send_to_slack, ticker=ticker or None),
             timeout=120.0
         )
         return templates.TemplateResponse("index.html", {

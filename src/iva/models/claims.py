@@ -2,7 +2,22 @@ from typing import List, Optional, Literal
 from pydantic import BaseModel, Field
 from datetime import datetime
 
-ClaimCategory = Literal["licensing","regulatory","partner_bank","security","compliance","marketing"]
+ClaimCategory = Literal[
+    "licensing",
+    "regulatory",
+    "partner_bank",
+    "security",
+    "compliance",
+    "marketing",
+    "financial_performance",
+    "market_position",
+    "business_metrics",
+    "forward_looking",
+    "governance",
+    "litigation",
+    "intellectual_property",
+    "material_events"
+]
 Jurisdiction = Literal["US","CA","EU","UK","OTHER"]
 
 class SourceRef(BaseModel):

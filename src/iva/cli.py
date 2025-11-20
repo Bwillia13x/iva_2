@@ -140,11 +140,27 @@ async def _verify(
     print(f"[DEBUG] LLM extracted {len(raw.get('claims', []))} claims")
 
     claims = []
+    seen_claims = set()  # Track claim fingerprints to deduplicate
+    
     for c in raw.get("claims", []):
         # Required fields per schema - but handle gracefully if LLM returns malformed data
         if "category" not in c or "claim_text" not in c:
             print(f"[WARN] Skipping malformed claim: {c}")
             continue
+        
+        # Deduplication: Create fingerprint from normalized claim text
+        claim_fingerprint = (
+            c["category"],
+            c["claim_text"].lower().strip(),
+            c.get("claim_kind", "").lower().strip(),
+        )
+        
+        if claim_fingerprint in seen_claims:
+            print(f"[DEDUP] Skipping duplicate claim: {c['claim_text'][:60]}...")
+            continue
+        
+        seen_claims.add(claim_fingerprint)
+        
         claims.append(
             ExtractedClaim(
                 id=c.get("id") or str(uuid.uuid4()),
@@ -158,6 +174,8 @@ async def _verify(
                 citations=[],
             )
         )
+    
+    print(f"[DEBUG] After deduplication: {len(claims)} unique claims")
     claimset = ClaimSet(url=url, company=company, extracted_at=datetime.now(UTC), claims=claims)
 
     print(f"\n[DEBUG] Created ClaimSet with {len(claims)} claims:")

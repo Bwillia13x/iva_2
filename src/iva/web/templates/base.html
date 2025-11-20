@@ -133,6 +133,87 @@
       }
     }
 
+    @keyframes successPulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      }
+      50% {
+        box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+      }
+    }
+
+    @keyframes confidenceGrow {
+      from {
+        width: 0;
+      }
+    }
+
+    /* Typography utility classes */
+    .text-h1 {
+      font-size: 3.5rem;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .text-h2 {
+      font-size: 2.25rem;
+      line-height: 1.111;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+
+    .text-h3 {
+      font-size: 1.875rem;
+      line-height: 1.2;
+      font-weight: 800;
+    }
+
+    .text-h4 {
+      font-size: 1.5rem;
+      line-height: 1.33;
+      font-weight: 700;
+    }
+
+    .text-caption {
+      font-size: 0.75rem;
+      line-height: 1;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    /* Severity-based styling utilities */
+    .severity-high {
+      border-left: 4px solid var(--color-critical);
+      background: linear-gradient(135deg, var(--color-critical-light) 0%, rgba(255,255,255,0.5) 100%);
+    }
+
+    .severity-med {
+      border-left: 4px solid var(--color-warning);
+      background: linear-gradient(135deg, var(--color-warning-light) 0%, rgba(255,255,255,0.5) 100%);
+    }
+
+    .severity-low {
+      border-left: 4px solid var(--color-success);
+      background: linear-gradient(135deg, var(--color-success-light) 0%, rgba(255,255,255,0.5) 100%);
+    }
+
+    /* Confidence meter */
+    .confidence-bar {
+      height: 4px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+      border-radius: 2px;
+      animation: confidenceGrow 0.6s ease-out forwards;
+    }
+
     @keyframes particles {
       0% {
         transform: translateY(0) translateX(0);
@@ -181,6 +262,14 @@
       --accent: 28 100% 52%;
       --gradient-start: #667eea;
       --gradient-end: #764ba2;
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --color-critical: #ef4444;
+      --color-info: #0ea5e9;
+      --color-success-light: #d1fae5;
+      --color-warning-light: #fef3c7;
+      --color-critical-light: #fee2e2;
+      --color-info-light: #cffafe;
     }
 
     html,

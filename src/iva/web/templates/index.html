@@ -331,16 +331,18 @@
 
       <div class="space-y-4" role="region" aria-label="Discrepancies">
         {% for d in result.card.discrepancies %}
+        {% set severity_class = 'severity-' + d.severity %}
         <div
-          class="relative p-5 bg-white/90 rounded-xl border-2 border-slate-100 hover:border-indigo-200 transition-all card-3d overflow-hidden"
-          role="article" aria-labelledby="discrepancy-{{ loop.index }}">
-          <!-- Gradient overlay based on severity -->
+          class="relative p-5 rounded-xl border-2 hover:shadow-lg transition-all card-3d overflow-hidden {{ severity_class }}"
+          role="article" aria-labelledby="discrepancy-{{ loop.index }}"
+          style="border-top-color: {% if d.severity == 'high' %}#ef4444{% elif d.severity == 'med' %}#f59e0b{% else %}#10b981{% endif %}; border-top-width: 2px;">
+          <!-- Enhanced gradient overlay -->
           {% if d.severity == 'high' %}
-          <div class="absolute inset-0 bg-gradient-to-br from-red-50/40 to-transparent pointer-events-none"></div>
+          <div class="absolute inset-0 bg-gradient-to-br from-red-50/60 via-white/40 to-transparent pointer-events-none"></div>
           {% elif d.severity == 'med' %}
-          <div class="absolute inset-0 bg-gradient-to-br from-amber-50/40 to-transparent pointer-events-none"></div>
+          <div class="absolute inset-0 bg-gradient-to-br from-amber-50/60 via-white/40 to-transparent pointer-events-none"></div>
           {% else %}
-          <div class="absolute inset-0 bg-gradient-to-br from-emerald-50/40 to-transparent pointer-events-none"></div>
+          <div class="absolute inset-0 bg-gradient-to-br from-emerald-50/60 via-white/40 to-transparent pointer-events-none"></div>
           {% endif %}
 
           {% set badge_classes = 'bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg' %}
@@ -349,22 +351,31 @@
           {% elif d.severity == 'med' %}{% set badge_classes = 'bg-gradient-to-r from-amber-500 to-yellow-600 text-white
           shadow-lg' %}{% endif %}
 
-          <div class="relative flex items-center gap-2 mb-3">
-            <div class="text-3xl" aria-hidden="true">{{ sev_emoji(d.severity) }}</div>
-            <div id="discrepancy-{{ loop.index }}" class="font-extrabold text-slate-900 text-lg flex-1">{{ d.type }}
+          <div class="relative flex items-start gap-3 mb-4">
+            <div class="text-3xl flex-shrink-0" aria-hidden="true">{{ sev_emoji(d.severity) }}</div>
+            <div class="flex-1 min-w-0">
+              <div id="discrepancy-{{ loop.index }}" class="font-extrabold text-slate-900 text-lg break-words">{{ d.type }}</div>
+              <div class="mt-2 flex items-center justify-between gap-3">
+                <div class="text-xs font-bold text-slate-700">
+                  <span class="font-extrabold text-slate-900">Confidence:</span> {{ (d.confidence*100)|round }}%
+                </div>
+                <span
+                  class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-extrabold {{ badge_classes }} capitalize severity-badge flex-shrink-0">
+                  {{ d.severity }}
+                </span>
+              </div>
+              <div class="confidence-bar">
+                <div class="confidence-fill" style="width: {{ (d.confidence*100)|round }}%; animation-delay: {{ loop.index * 0.1 }}s;"></div>
+              </div>
             </div>
-            <span
-              class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-extrabold {{ badge_classes }} capitalize severity-badge">
-              {{ d.severity }}
-            </span>
-          </div>
-
-          <div class="relative text-xs font-extrabold text-indigo-600 mb-1">Confidence: {{ (d.confidence*100)|round }}%
           </div>
 
           {% if d.related_claim_texts %}
-          <div class="relative mt-3 p-3 bg-blue-50/80 rounded-lg border border-blue-200">
-            <div class="font-extrabold text-slate-900 text-sm mb-2">📋 Claims:</div>
+          <div class="relative mt-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500 shadow-sm">
+            <div class="font-extrabold text-slate-900 text-sm mb-2 flex items-center gap-2">
+              <span>📋 Related Claims</span>
+              <span class="text-xs bg-blue-200 text-blue-900 px-2 py-0.5 rounded-full font-bold">{{ d.related_claim_texts | length }}</span>
+            </div>
             <ul class="pl-4 list-disc space-y-1 text-sm text-slate-700">
               {% for text in d.related_claim_texts %}
               <li class="font-medium">{{ text }}</li>
@@ -373,13 +384,14 @@
           </div>
           {% endif %}
 
-          <div class="relative mt-3 p-3 bg-amber-50/80 rounded-lg border border-amber-200">
+          <div class="relative mt-4 p-4 bg-gradient-to-br from-amber-50 to-amber-50/50 rounded-lg border-l-4 border-amber-500 shadow-sm">
             <div class="font-extrabold text-slate-900 text-sm mb-1">💡 Why it matters:</div>
-            <div class="text-sm text-slate-700 font-medium">{{ d.why_it_matters }}</div>
+            <div class="text-sm text-slate-700 font-medium leading-relaxed">{{ d.why_it_matters }}</div>
           </div>
 
-          <div class="relative mt-2 text-sm text-slate-600 font-medium">
-            <span class="font-extrabold text-slate-900">Expected evidence:</span> {{ d.expected_evidence }}
+          <div class="relative mt-4 p-4 bg-gradient-to-br from-indigo-50 to-indigo-50/50 rounded-lg border-l-4 border-indigo-500 shadow-sm">
+            <div class="font-extrabold text-slate-900 text-sm mb-1">🔍 Expected evidence:</div>
+            <div class="text-sm text-slate-700 font-medium">{{ d.expected_evidence }}</div>
           </div>
 
           <ul class="relative mt-3 space-y-2">

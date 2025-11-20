@@ -646,16 +646,51 @@ async def check_edgar_filings(company: str, ticker: Optional[str] = None) -> lis
 
         print(f"[EDGAR] Found {len(findings)} findings for {company} (CIK: {cik})")
 
-    except Exception as e:
-        print(f"[EDGAR] Error checking filings: {e}")
+    except asyncio.TimeoutError:
+        print(f"[EDGAR] Timeout fetching {company} - SEC API took too long")
         findings.append(
             AdapterFinding(
-                key="edgar_error",
-                value=str(e),
+                key="edgar_timeout",
+                value="timeout",
                 status="error",
                 adapter="edgar_filings",
                 observed_at=now,
-                snippet=f"Error accessing SEC EDGAR: {e}",
+                snippet="SEC API request timed out. SEC servers may be experiencing high load. This does not indicate missing filings.",
+                citations=[],
+            )
+        )
+    except Exception as e:
+        error_str = str(e).lower()
+        
+        # Determine specific error type for better messaging
+        if "connection refused" in error_str or "connection reset" in error_str:
+            snippet = "Cannot connect to SEC EDGAR API. Please check your internet connection and try again."
+            error_type = "connection_error"
+        elif "429" in error_str or "rate limit" in error_str or "too many requests" in error_str:
+            snippet = "SEC API rate limit exceeded. The SEC limits requests to 10/second. Please wait and try again in a moment."
+            error_type = "rate_limit"
+        elif "name or service not known" in error_str or "nodename nor servname" in error_str:
+            snippet = "Cannot resolve SEC API hostname. This may be a DNS issue or network problem."
+            error_type = "dns_error"
+        elif "json" in error_str or "decode" in error_str:
+            snippet = "Received invalid data format from SEC API. The SEC filing format may have changed unexpectedly."
+            error_type = "invalid_format"
+        elif "timeout" in error_str or "timed out" in error_str:
+            snippet = "SEC API request timed out. SEC servers may be slow. Please try again in a moment."
+            error_type = "timeout"
+        else:
+            snippet = f"SEC API error: {str(e)[:80]}. Please try again or contact support if the issue persists."
+            error_type = "unknown"
+        
+        print(f"[EDGAR] {error_type.upper()} checking filings for {company}: {e}")
+        findings.append(
+            AdapterFinding(
+                key="edgar_error",
+                value=error_type,
+                status="error",
+                adapter="edgar_filings",
+                observed_at=now,
+                snippet=snippet,
                 citations=[
                     Citation(
                         source="SEC EDGAR API",

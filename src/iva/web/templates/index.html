@@ -528,13 +528,17 @@
   function updateProgressMessage() {
     progressSeconds += 5;
     const messageEl = document.getElementById('progressMessage');
+    const adapters = ['NMLS', 'FINTRAC', 'EDGAR', 'CFPB', 'Bank Partners', 'Trust Center', 'News', 'Press Metrics'];
+    const adapterIndex = Math.min(Math.floor(progressSeconds / 10), adapters.length - 1);
 
     if (progressSeconds >= 90) {
-      messageEl.innerHTML = '<p class="text-amber-700 font-bold text-lg">⏳ Still analyzing... almost done! This is taking longer than usual.</p>';
+      messageEl.innerHTML = '<p class="text-amber-700 font-bold text-lg">⏳ Still analyzing... almost done! Finalizing results...</p>';
+    } else if (progressSeconds >= 75) {
+      messageEl.innerHTML = '<p class="text-indigo-700">📋 Reconciling claims and generating report...</p>';
     } else if (progressSeconds >= 60) {
-      messageEl.innerHTML = '<p class="text-indigo-700">⚙️ Processing complex claims and cross-referencing sources...</p>';
+      messageEl.innerHTML = '<p class="text-indigo-700">🔍 Running checks on ' + adapters[Math.min(adapterIndex, 7)] + ' and compiling findings...</p>';
     } else if (progressSeconds >= 30) {
-      messageEl.innerHTML = '<p class="text-indigo-700">🔍 Querying regulatory databases...</p>';
+      messageEl.innerHTML = '<p class="text-indigo-700">🔌 Querying: ' + adapters[adapterIndex] + '...</p>';
     } else {
       messageEl.innerHTML = '<p class="text-indigo-700">📊 Extracting and analyzing claims...</p>';
     }

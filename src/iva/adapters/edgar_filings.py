@@ -30,6 +30,9 @@ USER_AGENT = "Iva Reality Layer support@iva.app"
 # Rate limiting: SEC requires max 10 requests/second
 RATE_LIMIT_DELAY = 0.11  # 110ms between requests
 
+# Cache TTL: 3600 seconds (1 hour)
+CACHE_TTL = 3600
+
 
 class SECRateLimiter:
     """Simple rate limiter for SEC API (10 req/sec max)"""
@@ -45,19 +48,60 @@ class SECRateLimiter:
         self.last_request = asyncio.get_event_loop().time()
 
 
+class SECCache:
+    """Simple in-memory cache for SEC API responses with TTL"""
+
+    def __init__(self):
+        self.cache: Dict[str, tuple[Any, float]] = {}
+
+    async def get(self, key: str) -> Optional[Any]:
+        """Get cached value if not expired"""
+        if key in self.cache:
+            value, timestamp = self.cache[key]
+            now = asyncio.get_event_loop().time()
+            if now - timestamp < CACHE_TTL:
+                print(f"[CACHE HIT] {key}")
+                return value
+            else:
+                del self.cache[key]
+        return None
+
+    async def set(self, key: str, value: Any) -> None:
+        """Cache a value with current timestamp"""
+        self.cache[key] = (value, asyncio.get_event_loop().time())
+        print(f"[CACHE SET] {key}")
+
+    async def clear(self) -> None:
+        """Clear entire cache"""
+        self.cache.clear()
+
+
 _rate_limiter = SECRateLimiter()
+_cache = SECCache()
 
 
 async def _sec_get(url: str, timeout: float = 30.0) -> Dict[str, Any]:
-    """Make rate-limited GET request to SEC API"""
+    """Make rate-limited GET request to SEC API with caching"""
+    # Check cache first
+    cached = await _cache.get(url)
+    if cached is not None:
+        return cached
+
     await _rate_limiter.wait()
 
     headers = {"User-Agent": USER_AGENT, "Accept": "application/json"}
 
-    async with httpx.AsyncClient(timeout=timeout) as client:
-        response = await client.get(url, headers=headers)
-        response.raise_for_status()
-        return response.json()
+    try:
+        async with httpx.AsyncClient(timeout=timeout) as client:
+            response = await client.get(url, headers=headers)
+            response.raise_for_status()
+            data = response.json()
+            # Cache successful response
+            await _cache.set(url, data)
+            return data
+    except Exception as e:
+        print(f"[SEC API ERROR] {url}: {e}")
+        raise
 
 
 async def lookup_cik(

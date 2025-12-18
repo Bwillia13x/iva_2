@@ -5,7 +5,7 @@
 [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Available-success)](https://replit.com/@Bwillia13x/iva-2)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688.svg)](https://fastapi.tiangolo.com)
-[![OpenAI](https://img.shields.io/badge/OpenAI-GPT--5-412991.svg)](https://openai.com)
+[![Gemini](https://img.shields.io/badge/Gemini-3_Flash-4285F4.svg)](https://ai.google.dev)
 
 ---
 
@@ -16,9 +16,9 @@
 **The Solution**: Iva transforms fintech due diligence from a manual, time-consuming process into an automated, AI-powered workflow that delivers results in under 10 minutes:
 
 1. **📥 Ingest** – Scrapes company websites (with JavaScript rendering support via Playwright)
-2. **🔍 Extract** – Uses gpt-5-codex to identify licensing, partner-bank, and compliance claims
+2. **🔍 Extract** – Uses Gemini 3 Flash to identify licensing, partner-bank, and compliance claims
 3. **✅ Verify** – Queries authoritative sources (NMLS, FINTRAC, EDGAR, CFPB, bank partner lists)
-4. **⚖️ Reconcile** – AI reasoning (gpt-5-thinking) identifies discrepancies with severity ratings
+4. **⚖️ Reconcile** – AI reasoning identifies discrepancies with severity ratings
 5. **📊 Report** – Generates truth cards and detailed HTML memos with exact citations
 
 **Result**: High-confidence, severity-rated truth cards that flag potential red flags in seconds, not days.
@@ -77,11 +77,11 @@ Suggested outreach: "Could you share your NMLS roster and SOC 2 letter?"
   ┌──────────▼─────────┐   ┌───▼────────────────┐
   │  LLM Orchestration │   │  Adapter Layer     │
   │                    │   │                    │
-  │  • gpt-5-codex      │   │  • NMLS Consumer   │
-  │  • gpt-5-thinking│   │  • SEC EDGAR       │
-  │  • Structured      │   │  • CFPB Database   │
-  │    Extraction      │   │  • FINTRAC         │
-  │  • Reasoning       │   │  • Bank Partners   │
+  │  • Gemini 3 Flash  │   │  • NMLS Consumer   │
+  │  • Structured      │   │  • SEC EDGAR       │
+  │    Extraction      │   │  • CFPB Database   │
+  │  • AI Reasoning    │   │  • FINTRAC         │
+  │                    │   │  • Bank Partners   │
   └────────────────────┘   │  • News Sources    │
                            └────────────────────┘
 ```
@@ -89,7 +89,7 @@ Suggested outreach: "Could you share your NMLS roster and SOC 2 letter?"
 ### Tech Stack
 
 **Backend**: FastAPI (Python 3.11+) with async/await  
-**AI/LLM**: OpenAI API (gpt-5-codex for extraction, gpt-5-thinking for reasoning)  
+**AI/LLM**: Google Gemini 3 Flash (via Replit AI Integrations)  
 **Web Scraping**: Playwright (JS rendering), BeautifulSoup4, Trafilatura  
 **Templating**: Jinja2 for dynamic HTML reports  
 **Optional**: PostgreSQL + pgvector, Neo4j (disabled by default)
@@ -97,11 +97,9 @@ Suggested outreach: "Could you share your NMLS roster and SOC 2 letter?"
 ### Why This Stack?
 
 - **FastAPI**: High-performance async framework perfect for I/O-bound operations (web scraping + API calls)
-- **gpt-5-codex & gpt-5-thinking**: Latest GPT-5 models with Responses API for advanced reasoning and structured extraction
+- **Gemini 3 Flash**: Google's latest frontier AI model with advanced reasoning at low cost
 - **Playwright**: Handles JavaScript-rendered SPAs that traditional scrapers miss
 - **Modular Adapters**: Each data source is isolated, making it easy to add new regulators or jurisdictions
-
-**Note**: The application supports both GPT-5 models (via Responses API) and GPT-4 models (via Chat Completions API) automatically.
 
 ---
 
@@ -109,7 +107,7 @@ Suggested outreach: "Could you share your NMLS roster and SOC 2 letter?"
 
 ### Prerequisites
 - Python 3.11+
-- OpenAI API key ([get one here](https://platform.openai.com/api-keys))
+- Replit account with AI Integrations (for Gemini 3 Flash access)
 
 ### Installation
 
@@ -124,9 +122,8 @@ pip install -r requirements.txt
 # Install Playwright browsers
 python -m playwright install chromium
 
-# Set up environment variables
-cp .env.example .env
-# Edit .env and add your OPENAI_API_KEY
+# On Replit: AI Integrations handles API keys automatically
+# For local dev: Set GEMINI_API_KEY environment variable
 ```
 
 ### Run Web Server
@@ -166,7 +163,7 @@ python -m src.iva.cli eval \
 - Copy-to-clipboard for JSON and HTML reports
 
 ### 🤖 **AI-Powered Extraction**
-- gpt-5-codex extracts structured claims (licensing, partnerships, security)
+- Gemini 3 Flash extracts structured claims (licensing, partnerships, security)
 - Handles complex, unstructured website content
 - Supports JavaScript-rendered SPAs (React, Vue, Angular)
 - Automatic claim categorization and entity resolution
@@ -216,7 +213,7 @@ src/iva/
 │   └── normalize.py   # Content normalization
 │
 ├── llm/               # LLM orchestration
-│   ├── client.py      # OpenAI API calls (json_call, text_call)
+│   ├── client.py      # Gemini API calls (json_call, text_call)
 │   └── prompts/       # System prompts for extraction
 │
 ├── models/            # Pydantic data models
@@ -304,9 +301,8 @@ print(report.metrics, report.failures)
 
 | Variable | Required | Default | Description |
 |----------|----------|---------|-------------|
-| `OPENAI_API_KEY` | ✅ | - | OpenAI API key for GPT-5 models |
-| `OPENAI_MODEL_CODE` | ❌ | `gpt-5-codex` | Model for structured extraction (GPT-5 Codex via Responses API) |
-| `OPENAI_MODEL_REASONING` | ❌ | `gpt-5-thinking` | Model for reasoning (GPT-5 Thinking via Responses API) |
+| `AI_INTEGRATIONS_GEMINI_API_KEY` | Auto | - | Gemini API key (auto-configured by Replit) |
+| `AI_INTEGRATIONS_GEMINI_BASE_URL` | Auto | - | Gemini base URL (auto-configured by Replit) |
 | `SLACK_WEBHOOK_URL` | ❌ | - | Slack webhook for posting results |
 | `SLACK_BOT_TOKEN` | ❌ | - | Alternative: Slack bot token |
 | `SLACK_CHANNEL` | ❌ | - | Slack channel for notifications |
@@ -317,8 +313,7 @@ print(report.metrics, report.failures)
 
 ### Model Selection Rationale
 
-- **gpt-5-codex**: Optimized for code and structured data extraction. Excels at parsing HTML, identifying patterns, and outputting JSON schemas.
-- **gpt-5-thinking**: Advanced reasoning model that can assess claim plausibility, identify nuanced discrepancies, and provide human-like explanations.
+- **Gemini 3 Flash**: Google's latest frontier AI model (released December 2025) provides cost-efficient reasoning with state-of-the-art extraction and reasoning capabilities at a fraction of previous costs.
 
 ---
 
@@ -381,7 +376,7 @@ python -m src.iva.cli feedback \
 
 - **Advisory Only**: All outputs are advisory and not legal advice
 - **Respect robots.txt**: Scraper respects website policies and rate limits
-- **API Costs**: OpenAI API calls incur costs (~$0.50-$2 per analysis depending on website size)
+- **API Costs**: Gemini API calls are billed to Replit credits via AI Integrations
 - **Prototype Stage**: Some adapters use stubbed data (clearly marked as "MVP stub" in code)
 - **PII Handling**: No customer PII is stored; all data is transient unless databases are enabled
 - **Audit Trail**: All outputs include exact source URLs, query parameters, and timestamps
@@ -428,7 +423,7 @@ This project is provided as-is for demonstration and educational purposes.
 ## 🙏 Acknowledgments
 
 - **Inspired by**: The need for systematic, data-driven venture capital diligence
-- **Built with**: OpenAI GPT-5, FastAPI, Playwright, and the Python open-source ecosystem
+- **Built with**: Google Gemini 3 Flash, FastAPI, Playwright, and the Python open-source ecosystem
 - **Data sources**: NMLS, SEC, CFPB, FINTRAC, and public regulatory databases
 
 ---

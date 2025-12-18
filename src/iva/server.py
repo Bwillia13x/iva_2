@@ -1,5 +1,6 @@
 import asyncio
 import json
+import time
 from typing import Optional
 
 from fastapi import FastAPI, Form, HTTPException, Query, Request
@@ -46,6 +47,7 @@ async def run(
     send_to_slack: bool = Form(False),
 ):
     try:
+        start_time = time.time()
         card, memo_html = await asyncio.wait_for(
             _verify(
                 url,
@@ -57,6 +59,7 @@ async def run(
             ),
             timeout=120.0,
         )
+        elapsed_time = time.time() - start_time
         return templates.TemplateResponse(
             "index.html",
             {
@@ -67,6 +70,7 @@ async def run(
                     "card": card.model_dump(),
                     "card_json": json.dumps(card.model_dump(), indent=2, default=str),
                     "memo_html": memo_html,
+                    "analysis_time": round(elapsed_time, 1),
                 },
                 "sev_emoji": sev_emoji,
                 "error": None,
@@ -174,7 +178,7 @@ def get_user_friendly_error(error_msg: str, url: str) -> str:
         return f"🚫 Access forbidden to {url}. This website may be blocking automated access."
 
     if "api" in error_lower and "key" in error_lower:
-        return "🔑 OpenAI API key is not configured or invalid. Please set the OPENAI_API_KEY environment variable."
+        return "🔑 AI API key is not configured or invalid. Please check your API configuration."
 
     if "rate limit" in error_lower:
         return "⚡ API rate limit exceeded. Please wait a moment and try again."

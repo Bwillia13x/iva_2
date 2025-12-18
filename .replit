@@ -1,6 +1,7 @@
 modules = ["python-3.11", "web", "bash"]
 [agent]
 expertMode = true
+integrations = ["python_gemini_ai_integrations:1.0.0"]
 
 [nix]
 channel = "stable-25_05"
@@ -33,18 +34,6 @@ outputType = "webview"
 [[ports]]
 localPort = 5000
 externalPort = 80
-
-[[ports]]
-localPort = 33481
-externalPort = 3001
-
-[[ports]]
-localPort = 36381
-externalPort = 3002
-
-[[ports]]
-localPort = 43533
-externalPort = 3000
 
 [deployment]
 deploymentTarget = "autoscale"

@@ -26,3 +26,4 @@ ruff>=0.6.9
 python-multipart
 markdown
 weasyprint
+google-genai

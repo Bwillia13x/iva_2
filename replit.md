@@ -7,6 +7,19 @@ Iva's Reality Layer is a FastAPI web application that analyzes fintech company w
 
 ## Recent Changes
 
+### December 18, 2025 - Gemini 3 Flash Migration & Quick-Win Enhancements
+
+**Model Migration**
+- **Switched from OpenAI to Gemini 3 Flash**: Now using Google's latest Gemini 3 Flash model via Replit AI Integrations
+- **Cost-efficient reasoning**: Same reasoning capabilities at a fraction of the cost
+- **Updated LLM client**: Implemented lazy initialization with retry logic and exponential backoff
+
+**UI Enhancements for Recruiter Appeal**
+- **"Powered by Gemini 3 Flash" badge**: Displays prominently in results summary
+- **Analysis timing display**: Shows how fast each analysis completes (e.g., "42.3s")
+- **Professional footer redesign**: Tech stack badges (Gemini, FastAPI, SEC EDGAR, NMLS)
+- **Improved messaging**: Updated helper text to remove outdated OpenAI references
+
 ### October 24, 2025 - Analysis Quality & UX Improvements
 
 **Phase 2: Output Quality Enhancements**
@@ -17,7 +30,7 @@ Iva's Reality Layer is a FastAPI web application that analyzes fintech company w
 - **Note**: JavaScript rendering is available as an opt-in feature but may not work in all environments due to browser dependencies
 
 **Phase 1: Core Analysis Improvements**
-- **Fixed OpenAI Responses API integration**: Removed unsupported `response_format` parameter from Responses API calls
+- **Fixed API integration**: Improved structured data extraction with proper response parsing
 - **Enhanced claim extraction**: Completely rewrote prompt to extract 5 categories of claims (licensing, regulatory, partner_bank, security, compliance, marketing)
 - **Expanded reconciliation engine**: Added 10+ new verification rules:
   - ISO/SOC 2/PCI certification validation
@@ -35,7 +48,7 @@ Iva's Reality Layer is a FastAPI web application that analyzes fintech company w
 - Configured FastAPI server to run on port 5000 (Replit requirement)
 - Set up workflow for automatic server restart
 - Installed Playwright Chromium browser for web scraping
-- Created .env file and configured OPENAI_API_KEY
+- Configured environment variables for LLM integration
 - Added .gitignore for Python project
 - Configured deployment settings for autoscale deployment
 - Added python-multipart dependency for form handling
@@ -45,7 +58,7 @@ Iva's Reality Layer is a FastAPI web application that analyzes fintech company w
 ### Technology Stack
 - **Backend**: FastAPI (Python 3.11+)
 - **Web Scraping**: Playwright, BeautifulSoup4, Trafilatura
-- **AI/LLM**: OpenAI API (GPT models)
+- **AI/LLM**: Google Gemini 3 Flash (via Replit AI Integrations)
 - **Templating**: Jinja2
 - **Optional Databases**: PostgreSQL with pgvector, Neo4j (disabled by default)
 
@@ -79,12 +92,11 @@ src/iva/
 ### Environment Variables
 The application uses the following environment variables (configured in `.env`):
 
-**Required:**
-- `OPENAI_API_KEY` - OpenAI API key for LLM functionality (configured in Replit Secrets)
+**Automatic (via Replit AI Integrations):**
+- `AI_INTEGRATIONS_GEMINI_API_KEY` - Automatically configured by Replit
+- `AI_INTEGRATIONS_GEMINI_BASE_URL` - Automatically configured by Replit
 
 **Optional:**
-- `OPENAI_MODEL_CODE` - Model for structured extraction tasks (default: gpt-5-codex)
-- `OPENAI_MODEL_REASONING` - Model for reasoning tasks (default: gpt-5-thinking)
 - `SLACK_WEBHOOK_URL` or `SLACK_BOT_TOKEN` + `SLACK_CHANNEL` - For Slack notifications
 - `USE_POSTGRES`, `USE_PGVECTOR`, `USE_NEO4J` - Enable optional databases (all false by default)
 
@@ -105,7 +117,7 @@ python -m src.iva.cli verify --url "https://example.com" --company "Example Inc.
 All Python dependencies are managed via `requirements.txt` and installed automatically. Key dependencies include:
 - FastAPI & Uvicorn for web server
 - Playwright for JavaScript-rendered page scraping
-- OpenAI SDK for LLM integration
+- Google GenAI SDK for Gemini integration
 - SQLAlchemy & AsyncPG for optional database support
 - Beautiful Soup & Trafilatura for HTML parsing
 
@@ -125,7 +137,7 @@ The application is configured for autoscale deployment, which is ideal for this 
 ## Important Notes
 - **Advisory Only**: Outputs are advisory and not legal advice
 - **Respect robots.txt**: The scraper should respect website policies
-- **API Costs**: OpenAI API calls will incur costs based on usage
+- **API Costs**: Gemini API calls are billed to Replit credits via AI Integrations
 - **Databases Optional**: PostgreSQL and Neo4j integrations are disabled by default and not required for basic functionality
 - **Playwright**: Chromium browser is installed for JavaScript rendering but may have limited system dependencies in the Replit environment
 

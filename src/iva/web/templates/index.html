@@ -132,8 +132,7 @@
 
       <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-5 shadow-inner">
         <p class="text-sm text-slate-700 font-bold">⏱️ <strong>Estimated time:</strong> 30-60 seconds per analysis</p>
-        <p class="text-xs text-slate-600 mt-2 font-medium">Requires configured OPENAI_API_KEY. Slack posting is
-          optional.</p>
+        <p class="text-xs text-slate-600 mt-2 font-medium">Powered by Gemini 3 Flash. Slack posting is optional.</p>
       </div>
     </form>
   </section>
@@ -263,9 +262,27 @@
 
     <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
       <div>
-        <div class="text-xs uppercase tracking-widest text-indigo-600 font-extrabold mb-2">Truth Meter Summary</div>
+        <div class="flex items-center gap-3 mb-2">
+          <div class="text-xs uppercase tracking-widest text-indigo-600 font-extrabold">Truth Meter Summary</div>
+          {% if result.analysis_time %}
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-emerald-500 to-green-600 text-white text-xs font-bold shadow-lg">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+            </svg>
+            {{ result.analysis_time }}s
+          </div>
+          {% endif %}
+        </div>
         <div class="text-4xl font-extrabold text-slate-900 mb-3 tracking-tight leading-tight gradient-text">{{
           result.company }}</div>
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-xs font-bold shadow-md">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            Powered by Gemini 3 Flash
+          </span>
+        </div>
         <p class="text-slate-600 text-sm font-medium">Legend: H = High severity, M = Medium severity, L = Low severity
           discrepancies.</p>
       </div>

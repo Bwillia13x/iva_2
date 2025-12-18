@@ -7,18 +7,23 @@ Iva's Reality Layer is a FastAPI web application that analyzes fintech company w
 
 ## Recent Changes
 
-### December 18, 2025 - Gemini 3 Flash Migration & Quick-Win Enhancements
+### December 18, 2025 - Dark Theme UI Redesign & Gemini 3 Flash Migration
+
+**Complete UI Redesign (InoviaScout Aesthetic)**
+- **Dark theme**: Charcoal background (#0f172a) with elevated dark surfaces
+- **Industrial header**: "IVA DEAL SCOUT" title with "// REALITY LAYER" subtitle, uppercase typography
+- **Tab navigation**: Dashboard, History, Thesis tabs on the right
+- **Dashboard layout**: Two-column design with scan queue (left) and stats/results (right)
+- **Stats cards**: Companies Scanned, High Signal (>80 Score), Thesis Fit metrics
+- **Animated empty state**: Radar/sonar visualization with "No analysis results. RUN THE SCOUT TO BEGIN."
+- **Dark form inputs**: Subtle borders, cyan focus states, monospace fonts for URLs
+- **Quick demos section**: Private and public company buttons with themed styling
+- **Footer**: "GEMINI 3.0 INTELLIGENCE" badge with analysis mode toggle
 
 **Model Migration**
 - **Switched from OpenAI to Gemini 3 Flash**: Now using Google's latest Gemini 3 Flash model via Replit AI Integrations
 - **Cost-efficient reasoning**: Same reasoning capabilities at a fraction of the cost
 - **Updated LLM client**: Implemented lazy initialization with retry logic and exponential backoff
-
-**UI Enhancements for Recruiter Appeal**
-- **"Powered by Gemini 3 Flash" badge**: Displays prominently in results summary
-- **Analysis timing display**: Shows how fast each analysis completes (e.g., "42.3s")
-- **Professional footer redesign**: Tech stack badges (Gemini, FastAPI, SEC EDGAR, NMLS)
-- **Improved messaging**: Updated helper text to remove outdated OpenAI references
 
 ### October 24, 2025 - Analysis Quality & UX Improvements
 

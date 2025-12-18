@@ -1,103 +1,50 @@
 {% extends "base.html" %}
 {% block content %}
 
-<!-- Prominent Demo Callout Box -->
-<div
-  class="mb-8 p-6 rounded-2xl bg-gradient-to-br from-indigo-50 via-blue-50 to-purple-50 border-2 border-indigo-200/60 card card-3d hover:border-indigo-300 transition-all">
-  <div class="flex items-start gap-4">
-    <div class="text-4xl animate-bounce">👉</div>
-    <div class="flex-1">
-      <h3 class="text-2xl font-extrabold text-slate-900 mb-3 gradient-text tracking-tight">New here? Try a quick demo!
-      </h3>
-      <p class="text-slate-700 mb-4 font-medium text-base leading-relaxed">Click any example to see a live analysis
-        (takes ~30-60 seconds):</p>
-
-      <div class="mb-3">
-        <p class="text-xs font-extrabold text-indigo-700 uppercase tracking-widest mb-2">Private Companies</p>
-        <div class="grid sm:grid-cols-3 gap-3">
-          <button type="button" onclick="loadDemo('https://stripe.com', 'Stripe Inc.', '')"
-            class="btn btn-demo btn-md indigo-theme">
-            <span>🚀</span> Stripe
-          </button>
-          <button type="button" onclick="loadDemo('https://plaid.com', 'Plaid Inc.', '')"
-            class="btn btn-demo btn-md indigo-theme">
-            <span>🏦</span> Plaid
-          </button>
-          <button type="button" onclick="loadDemo('https://squareup.com', 'Square Inc.', 'SQ')"
-            class="btn btn-demo btn-md indigo-theme">
-            <span>🧾</span> Square
-          </button>
-        </div>
-      </div>
-
-      <div>
-        <p class="text-xs font-extrabold text-purple-700 uppercase tracking-widest mb-2">📊 Public Companies (SEC
-          Filings)</p>
-        <div class="grid sm:grid-cols-3 gap-3">
-          <button type="button" onclick="loadDemo('https://www.apple.com', 'Apple Inc.', 'AAPL')"
-            class="btn btn-demo btn-md purple-theme">
-            <span>🍎</span> Apple
-          </button>
-          <button type="button" onclick="loadDemo('https://www.paypal.com', 'PayPal Holdings Inc.', 'PYPL')"
-            class="btn btn-demo btn-md purple-theme">
-            <span>💸</span> PayPal
-          </button>
-          <button type="button" onclick="loadDemo('https://www.marqeta.com', 'Marqeta Inc.', 'MQ')"
-            class="btn btn-demo btn-md purple-theme">
-            <span>🌊</span> Marqeta
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="flex items-center justify-between mb-6">
+  <div class="text-caption text-dark-400">Ready to scout.</div>
 </div>
 
-<div class="grid lg:grid-cols-5 gap-8">
-  <section class="lg:col-span-3 glass-subtle border-2 border-white/60 rounded-2xl p-6 card card-3d">
-    <div class="mb-6">
-      <h2 class="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight leading-tight">Analyze any company</h2>
-      <p class="text-slate-600 font-medium text-base leading-relaxed">Paste any fintech marketing site to run the same
-        verification used in the demos.</p>
-    </div>
-
-    <form id="truthForm" action="/run" method="post" class="space-y-5" onsubmit="return handleSubmit(event)">
-      <div>
-        <label for="urlInput" class="block text-sm font-extrabold text-slate-700 mb-2 tracking-wide">Company URL <span
-            class="text-red-500" aria-label="required">*</span></label>
-        <input required name="url" id="urlInput" type="url" placeholder="https://example.com"
-          aria-describedby="urlError urlHelp" aria-invalid="false" autocomplete="url"
-          class="w-full px-5 py-4 rounded-xl border-2 border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 bg-white font-medium text-slate-900 placeholder-slate-400 transition-all shadow-sm hover:shadow-md" />
-        <p id="urlHelp" class="text-xs text-slate-500 mt-1 font-medium">Enter the full URL of the company website</p>
-        <p id="urlError" class="text-sm text-red-600 mt-2 font-bold hidden" role="alert" aria-live="polite"></p>
+<div class="grid lg:grid-cols-12 gap-6">
+  <section class="lg:col-span-4 space-y-6">
+    <div class="surface-elevated rounded-xl p-5">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-caption text-dark-400">SCAN QUEUE</h2>
+        <span class="text-xs text-dark-500" id="targetCount">0 Targets</span>
       </div>
 
-      <div>
-        <label for="companyInput" class="block text-sm font-extrabold text-slate-700 mb-2 tracking-wide">Company Name
-          <span class="text-red-500" aria-label="required">*</span></label>
-        <input required name="company" id="companyInput" type="text" placeholder="Acme Payments Inc."
-          aria-describedby="companyError companyHelp" aria-invalid="false" autocomplete="organization"
-          class="w-full px-5 py-4 rounded-xl border-2 border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 bg-white font-medium text-slate-900 placeholder-slate-400 transition-all shadow-sm hover:shadow-md" />
-        <p id="companyHelp" class="text-xs text-slate-500 mt-1 font-medium">Enter the legal or common name of the
-          company</p>
-        <p id="companyError" class="text-sm text-red-600 mt-2 font-bold hidden" role="alert" aria-live="polite"></p>
-      </div>
-
-      <div>
-        <label class="block text-sm font-extrabold text-slate-700 mb-2 tracking-wide">
-          Stock Ticker <span class="text-slate-500 font-normal text-xs">(optional, for public companies)</span>
-        </label>
-        <input name="ticker" id="tickerInput" type="text" placeholder="AAPL" maxlength="10"
-          class="w-full px-5 py-4 rounded-xl border-2 border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 bg-white font-medium text-slate-900 placeholder-slate-400 transition-all uppercase shadow-sm hover:shadow-md" />
-        <p class="text-xs text-slate-600 mt-1 font-medium">💡 Providing a ticker enables enhanced analysis using SEC
-          filings (10-K, 10-Q, XBRL data)</p>
-      </div>
-
-      <div class="grid sm:grid-cols-2 gap-4">
+      <form id="truthForm" action="/run" method="post" class="space-y-4" onsubmit="return handleSubmit(event)">
         <div>
-          <label for="jurisdictionSelect"
-            class="block text-sm font-extrabold text-slate-700 mb-2 tracking-wide">Jurisdiction</label>
+          <label for="urlInput" class="block text-caption text-dark-400 mb-2">Company URL <span class="text-red-400">*</span></label>
+          <input required name="url" id="urlInput" type="url" placeholder="https://example.com"
+            aria-describedby="urlError urlHelp" aria-invalid="false" autocomplete="url"
+            class="w-full px-4 py-3 rounded-lg bg-dark-800 border border-dark-600 text-dark-100 placeholder-dark-500 font-mono text-sm focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/20" />
+          <p id="urlHelp" class="text-xs text-dark-500 mt-1">Enter the full URL of the company website</p>
+          <p id="urlError" class="text-sm text-red-400 mt-2 font-medium hidden" role="alert" aria-live="polite"></p>
+        </div>
+
+        <div>
+          <label for="companyInput" class="block text-caption text-dark-400 mb-2">Company Name <span class="text-red-400">*</span></label>
+          <input required name="company" id="companyInput" type="text" placeholder="Acme Payments Inc."
+            aria-describedby="companyError companyHelp" aria-invalid="false" autocomplete="organization"
+            class="w-full px-4 py-3 rounded-lg bg-dark-800 border border-dark-600 text-dark-100 placeholder-dark-500 text-sm focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/20" />
+          <p id="companyHelp" class="text-xs text-dark-500 mt-1">Enter the legal or common name</p>
+          <p id="companyError" class="text-sm text-red-400 mt-2 font-medium hidden" role="alert" aria-live="polite"></p>
+        </div>
+
+        <div>
+          <label class="block text-caption text-dark-400 mb-2">
+            Stock Ticker <span class="text-dark-500 font-normal text-xs normal-case">(optional)</span>
+          </label>
+          <input name="ticker" id="tickerInput" type="text" placeholder="AAPL" maxlength="10"
+            class="w-full px-4 py-3 rounded-lg bg-dark-800 border border-dark-600 text-dark-100 placeholder-dark-500 font-mono text-sm uppercase focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/20" />
+          <p class="text-xs text-dark-500 mt-1">Enables SEC filings analysis</p>
+        </div>
+
+        <div>
+          <label for="jurisdictionSelect" class="block text-caption text-dark-400 mb-2">Jurisdiction</label>
           <select id="jurisdictionSelect" name="jurisdiction"
-            class="w-full px-5 py-4 rounded-xl border-2 border-slate-200 bg-white font-medium text-slate-900 focus:ring-2 focus:ring-indigo-500/50 transition-all cursor-pointer shadow-sm hover:shadow-md">
+            class="w-full px-4 py-3 rounded-lg bg-dark-800 border border-dark-600 text-dark-100 text-sm cursor-pointer focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400/20">
             <option value="US">🇺🇸 United States</option>
             <option value="CA">🇨🇦 Canada</option>
             <option value="EU">🇪🇺 European Union</option>
@@ -105,116 +52,141 @@
           </select>
         </div>
 
-        <div class="flex flex-col justify-end gap-3">
-          <label class="inline-flex items-center gap-2 text-sm text-slate-700 font-bold relative group cursor-pointer">
-            <input type="checkbox" name="render_js" value="1" class="rounded w-4 h-4 cursor-pointer" />
+        <div class="flex flex-wrap gap-4 pt-2">
+          <label class="inline-flex items-center gap-2 text-xs text-dark-300 cursor-pointer group">
+            <input type="checkbox" name="render_js" value="1" class="rounded bg-dark-700 border-dark-500 text-cyan-500 focus:ring-cyan-400/20 cursor-pointer" />
             <span>Render JS</span>
-            <span class="cursor-help">ℹ️</span>
-            <div
-              class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-72 p-4 bg-slate-900 text-white text-xs rounded-xl shadow-2xl z-10 border border-white/10">
-              Enable JavaScript rendering for sites that load content dynamically. May increase analysis time.
-            </div>
+            <span class="text-dark-500 group-hover:text-dark-300 transition-colors">ℹ️</span>
           </label>
-          <label class="inline-flex items-center gap-2 text-sm text-slate-700 font-bold cursor-pointer">
-            <input type="checkbox" name="send_to_slack" value="1" class="rounded w-4 h-4 cursor-pointer" />
+          <label class="inline-flex items-center gap-2 text-xs text-dark-300 cursor-pointer">
+            <input type="checkbox" name="send_to_slack" value="1" class="rounded bg-dark-700 border-dark-500 text-cyan-500 focus:ring-cyan-400/20 cursor-pointer" />
             <span>Send to Slack</span>
           </label>
         </div>
-      </div>
 
-      <div class="pt-3">
-        <button type="submit" id="submitBtn"
-          class="btn btn-primary btn-lg w-full sm:w-auto"
-          aria-label="Submit form to analyze company">
-          <span id="submitBtnText">▶ Run Truth Meter</span>
-        </button>
-      </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() if csrf_token is defined else '' }}" />
+      </form>
 
-      <div class="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-5 shadow-inner">
-        <p class="text-sm text-slate-700 font-bold">⏱️ <strong>Estimated time:</strong> 30-60 seconds per analysis</p>
-        <p class="text-xs text-slate-600 mt-2 font-medium">Powered by Gemini 3 Flash. Slack posting is optional.</p>
+      <div id="urlQueueDisplay" class="mt-4 space-y-1 max-h-32 overflow-y-auto hidden">
       </div>
-    </form>
-  </section>
+    </div>
 
-  <section class="lg:col-span-2">
-    <div class="glass-subtle border-2 border-white/60 rounded-2xl p-6 card card-3d h-full">
-      <h2 class="text-3xl font-extrabold text-slate-900 mb-5 tracking-tight leading-tight">About</h2>
-      <p class="text-slate-700 leading-relaxed font-medium mb-6 text-base">
-        Iva's Reality Layer turns claims into facts. It extracts licensing, partner-bank, and security assertions from a
-        company's site, checks authoritative sources, reconciles discrepancies, and produces a severity/confidence truth
-        card and memo.
-      </p>
-      <div class="space-y-3 text-slate-700 text-sm">
-        <div class="flex items-start gap-3 p-3 bg-white/60 rounded-lg">
-          <span class="text-lg">🔄</span>
-          <div>
-            <div class="font-bold text-slate-900">Pipeline</div>
-            <div class="text-xs text-slate-600">Ingest → Extract → Query → Reconcile → Report</div>
-          </div>
+    <div class="surface-elevated rounded-xl p-5">
+      <h3 class="text-caption text-dark-400 mb-3">QUICK DEMOS</h3>
+      <div class="space-y-2">
+        <p class="text-xs text-dark-500 uppercase tracking-wider mb-2">Private Companies</p>
+        <div class="grid grid-cols-3 gap-2">
+          <button type="button" onclick="loadDemo('https://stripe.com', 'Stripe Inc.', '')"
+            class="btn btn-demo btn-sm cyan-theme">
+            Stripe
+          </button>
+          <button type="button" onclick="loadDemo('https://plaid.com', 'Plaid Inc.', '')"
+            class="btn btn-demo btn-sm cyan-theme">
+            Plaid
+          </button>
+          <button type="button" onclick="loadDemo('https://squareup.com', 'Square Inc.', 'SQ')"
+            class="btn btn-demo btn-sm cyan-theme">
+            Square
+          </button>
         </div>
-        <div class="flex items-start gap-3 p-3 bg-white/60 rounded-lg">
-          <span class="text-lg">🔌</span>
-          <div>
-            <div class="font-bold text-slate-900">Adapters</div>
-            <div class="text-xs text-slate-600">NMLS, FINTRAC, EDGAR, CFPB, Bank partners, Trust centers, News</div>
-          </div>
-        </div>
-        <div class="flex items-start gap-3 p-3 bg-white/60 rounded-lg">
-          <span class="text-lg">⚖️</span>
-          <div>
-            <div class="font-bold text-slate-900">Advisory Only</div>
-            <div class="text-xs text-slate-600">Not legal advice</div>
-          </div>
+        <p class="text-xs text-dark-500 uppercase tracking-wider mt-3 mb-2">Public Companies (SEC)</p>
+        <div class="grid grid-cols-3 gap-2">
+          <button type="button" onclick="loadDemo('https://www.apple.com', 'Apple Inc.', 'AAPL')"
+            class="btn btn-demo btn-sm teal-theme">
+            Apple
+          </button>
+          <button type="button" onclick="loadDemo('https://www.paypal.com', 'PayPal Holdings Inc.', 'PYPL')"
+            class="btn btn-demo btn-sm teal-theme">
+            PayPal
+          </button>
+          <button type="button" onclick="loadDemo('https://www.marqeta.com', 'Marqeta Inc.', 'MQ')"
+            class="btn btn-demo btn-sm teal-theme">
+            Marqeta
+          </button>
         </div>
       </div>
     </div>
+  </section>
+
+  <section class="lg:col-span-8 space-y-6">
+    <div class="grid grid-cols-3 gap-4">
+      <div class="stat-card">
+        <div class="stat-label">COMPANIES SCANNED</div>
+        <div class="stat-value" id="statScanned">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">HIGH SIGNAL</div>
+        <div class="stat-value" id="statHighSignal">0</div>
+        <div class="stat-sublabel">&gt;80 Score</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">THESIS FIT</div>
+        <div class="stat-value" id="statThesisFit">0%</div>
+      </div>
+    </div>
+
+    <div id="resultsPanel" class="surface-elevated rounded-xl min-h-[400px] flex flex-col">
+      <div id="emptyState" class="flex-1 flex flex-col items-center justify-center p-12 text-center">
+        <div class="radar-container mb-8 empty-state-icon">
+          <div class="radar-ring radar-ring-1"></div>
+          <div class="radar-ring radar-ring-2"></div>
+          <div class="radar-ring radar-ring-3"></div>
+          <div class="radar-sweep"></div>
+          <div class="radar-center"></div>
+        </div>
+        <p class="text-dark-400 text-sm mb-2">No analysis results.</p>
+        <p class="text-dark-500 text-xs uppercase tracking-widest">RUN THE SCOUT TO BEGIN.</p>
+      </div>
+
+      <div id="resultsContent" class="hidden p-6">
+      </div>
+    </div>
+
+    <button type="submit" form="truthForm" id="submitBtn"
+      class="btn btn-primary btn-lg w-full"
+      aria-label="Submit form to analyze company">
+      <span id="submitBtnText">Run Analysis</span>
+    </button>
   </section>
 </div>
 
-<!-- Loading Spinner -->
-<div id="loadingSpinner" class="hidden mt-10 p-10 rounded-2xl glass border-2 border-indigo-200 text-center result-card">
-  <div
-    class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 mb-6 relative">
-    <div
-      class="absolute inset-0 rounded-full border-4 border-t-white border-r-transparent border-b-transparent border-l-transparent animate-spin">
-    </div>
-    <svg class="w-12 h-12 text-white" fill="none" viewBox="0 0 24 24">
+<div id="loadingSpinner" class="hidden mt-8 surface-elevated rounded-xl p-10 text-center result-card">
+  <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-dark-700 border border-dark-600 mb-6 relative">
+    <div class="absolute inset-0 rounded-full border-2 border-t-cyan-400 border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
+    <svg class="w-10 h-10 text-cyan-400" fill="none" viewBox="0 0 24 24">
       <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" opacity="0.25" />
       <path fill="currentColor" d="M12 2a10 10 0 0110 10h-2a8 8 0 00-8-8V2z" opacity="0.75" />
     </svg>
   </div>
-  <h3 class="text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">Analyzing Company Claims...</h3>
-  <p class="text-slate-600 mb-5 font-medium text-lg">This may take 30-60 seconds</p>
-  <div id="progressMessage" class="text-base mb-6 font-bold">
-    <p class="text-indigo-700 text-lg">📊 Extracting and analyzing claims...</p>
+  <h3 class="text-2xl font-bold text-dark-100 mb-3 tracking-tight">ANALYZING COMPANY CLAIMS...</h3>
+  <p class="text-dark-400 mb-5 text-sm">This may take 30-60 seconds</p>
+  <div id="progressMessage" class="text-sm mb-6">
+    <p class="text-cyan-400">📊 Extracting and analyzing claims...</p>
   </div>
-  <div class="text-sm text-slate-600 space-y-2 max-w-md mx-auto">
-    <div class="flex items-center gap-2 p-3 bg-white/80 rounded-lg shadow-sm">
-      <span class="text-green-600 text-lg">✓</span>
-      <span class="font-semibold">Fetching website content</span>
+  <div class="text-sm text-dark-400 space-y-2 max-w-md mx-auto">
+    <div class="flex items-center gap-2 p-3 bg-dark-700/50 rounded-lg border border-dark-600">
+      <span class="text-emerald-400">✓</span>
+      <span>Fetching website content</span>
     </div>
-    <div class="flex items-center gap-2 p-3 bg-white/80 rounded-lg shadow-sm">
-      <span class="text-green-600 text-lg">✓</span>
-      <span class="font-semibold">Extracting claims with AI</span>
+    <div class="flex items-center gap-2 p-3 bg-dark-700/50 rounded-lg border border-dark-600">
+      <span class="text-emerald-400">✓</span>
+      <span>Extracting claims with AI</span>
     </div>
-    <div class="flex items-center gap-2 p-3 bg-white/80 rounded-lg shadow-sm">
-      <span class="text-green-600 text-lg">✓</span>
-      <span class="font-semibold">Querying authoritative sources (NMLS, EDGAR, CFPB...)</span>
+    <div class="flex items-center gap-2 p-3 bg-dark-700/50 rounded-lg border border-dark-600">
+      <span class="text-emerald-400">✓</span>
+      <span>Querying authoritative sources (NMLS, EDGAR, CFPB...)</span>
     </div>
-    <div class="flex items-center gap-2 p-3 bg-white/80 rounded-lg shadow-sm">
-      <span class="text-green-600 text-lg">✓</span>
-      <span class="font-semibold">Reconciling discrepancies</span>
+    <div class="flex items-center gap-2 p-3 bg-dark-700/50 rounded-lg border border-dark-600">
+      <span class="text-emerald-400">✓</span>
+      <span>Reconciling discrepancies</span>
     </div>
-    <div
-      class="flex items-center gap-2 p-3 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg shimmer-bg border-2 border-indigo-200 shadow-md">
-      <span class="text-indigo-600 text-lg">⏳</span>
-      <span class="font-semibold">Generating truth card and memo...</span>
+    <div class="flex items-center gap-2 p-3 bg-dark-700 rounded-lg border border-cyan-500/30 shimmer-bg">
+      <span class="text-cyan-400">⏳</span>
+      <span>Generating truth card and memo...</span>
     </div>
   </div>
 
-  <!-- Skeleton Screen Preview -->
-  <div class="mt-10 space-y-4 max-w-2xl mx-auto">
+  <div class="mt-8 space-y-4 max-w-2xl mx-auto">
     <div class="skeleton skeleton-title"></div>
     <div class="flex gap-4">
       <div class="skeleton skeleton-circle"></div>
@@ -229,18 +201,16 @@
 </div>
 
 {% if error %}
-<div
-  class="mt-10 p-6 rounded-2xl bg-gradient-to-br from-red-50 to-rose-50 border-2 border-red-300 result-card card-3d relative overflow-hidden">
-  <div class="absolute inset-0 bg-gradient-to-br from-red-100/40 to-transparent pointer-events-none"></div>
-  <div class="relative flex items-start gap-4">
-    <div class="text-4xl">⚠️</div>
+<div class="mt-8 p-6 rounded-xl surface-elevated border-l-4 border-red-500 result-card">
+  <div class="flex items-start gap-4">
+    <div class="text-3xl">⚠️</div>
     <div class="flex-1">
-      <h3 class="text-2xl font-extrabold text-red-900 mb-4 tracking-tight">Analysis Failed</h3>
-      <p class="text-red-800 mb-5 font-semibold whitespace-pre-line">{{ error }}</p>
+      <h3 class="text-xl font-bold text-red-400 mb-3 uppercase tracking-wide">Analysis Failed</h3>
+      <p class="text-dark-300 mb-5 whitespace-pre-line font-mono text-sm">{{ error }}</p>
       <button onclick="location.reload()"
         class="btn btn-secondary btn-md"
         aria-label="Reload page to try again">
-        <span aria-hidden="true">🔄</span> Try Again
+        🔄 Try Again
       </button>
     </div>
   </div>
@@ -251,175 +221,128 @@
 {% set high_count = result.card.discrepancies | selectattr('severity','equalto','high') | list | length %}
 {% set med_count = result.card.discrepancies | selectattr('severity','equalto','med') | list | length %}
 {% set low_count = result.card.discrepancies | selectattr('severity','equalto','low') | list | length %}
-<div class="mt-10 space-y-8">
-  <!-- Summary Card -->
-  <div
-    class="glass-subtle rounded-2xl p-6 md:p-8 border-2 border-white/60 card card-3d result-card relative overflow-hidden">
-    <!-- Gradient Overlay -->
-    <div
-      class="absolute inset-0 bg-gradient-to-br from-indigo-50/50 via-transparent to-purple-50/50 pointer-events-none">
-    </div>
-
-    <div class="relative flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+<div class="mt-8 space-y-6">
+  <div class="surface-elevated rounded-xl p-6 result-card">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
       <div>
         <div class="flex items-center gap-3 mb-2">
-          <div class="text-xs uppercase tracking-widest text-indigo-600 font-extrabold">Truth Meter Summary</div>
+          <div class="text-caption text-cyan-400">TRUTH METER SUMMARY</div>
           {% if result.analysis_time %}
-          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-emerald-500 to-green-600 text-white text-xs font-bold shadow-lg">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
             </svg>
             {{ result.analysis_time }}s
           </div>
           {% endif %}
         </div>
-        <div class="text-4xl font-extrabold text-slate-900 mb-3 tracking-tight leading-tight gradient-text">{{
-          result.company }}</div>
-        <div class="flex flex-wrap items-center gap-2 mb-2">
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-xs font-bold shadow-md">
-            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+        <div class="text-3xl font-bold text-dark-100 mb-2 tracking-tight">{{ result.company }}</div>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-dark-700 border border-dark-600 text-xs font-medium text-dark-300">
+            <svg class="w-3 h-3 text-cyan-400" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
             </svg>
-            Powered by Gemini 3 Flash
+            Gemini 3 Flash
           </span>
         </div>
-        <p class="text-slate-600 text-sm font-medium">Legend: H = High severity, M = Medium severity, L = Low severity
-          discrepancies.</p>
+        <p class="text-dark-500 text-xs">H = High, M = Medium, L = Low severity discrepancies</p>
       </div>
 
-      <div class="flex gap-4">
-        <div
-          class="text-center px-6 py-4 bg-gradient-to-br from-red-50 to-rose-100 rounded-2xl border-2 border-red-200 card card-3d relative overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-br from-red-100/50 to-transparent pointer-events-none"></div>
-          <div
-            class="relative px-4 py-1.5 rounded-lg bg-gradient-to-r from-red-500 to-rose-600 text-white font-bold text-xs uppercase tracking-wider mb-2 shadow-lg">
-            High</div>
-          <div class="relative text-4xl font-extrabold text-slate-900">{{ high_count }}</div>
+      <div class="flex gap-3">
+        <div class="text-center px-5 py-3 bg-red-500/10 rounded-xl border border-red-500/30">
+          <div class="text-caption text-red-400 mb-1">HIGH</div>
+          <div class="text-3xl font-bold text-dark-100">{{ high_count }}</div>
         </div>
-        <div
-          class="text-center px-6 py-4 bg-gradient-to-br from-amber-50 to-yellow-100 rounded-2xl border-2 border-amber-200 card card-3d relative overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-br from-amber-100/50 to-transparent pointer-events-none"></div>
-          <div
-            class="relative px-4 py-1.5 rounded-lg bg-gradient-to-r from-amber-500 to-yellow-600 text-white font-bold text-xs uppercase tracking-wider mb-2 shadow-lg">
-            Med</div>
-          <div class="relative text-4xl font-extrabold text-slate-900">{{ med_count }}</div>
+        <div class="text-center px-5 py-3 bg-amber-500/10 rounded-xl border border-amber-500/30">
+          <div class="text-caption text-amber-400 mb-1">MED</div>
+          <div class="text-3xl font-bold text-dark-100">{{ med_count }}</div>
         </div>
-        <div
-          class="text-center px-6 py-4 bg-gradient-to-br from-emerald-50 to-green-100 rounded-2xl border-2 border-emerald-200 card card-3d relative overflow-hidden">
-          <div class="absolute inset-0 bg-gradient-to-br from-emerald-100/50 to-transparent pointer-events-none"></div>
-          <div
-            class="relative px-4 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-green-600 text-white font-bold text-xs uppercase tracking-wider mb-2 shadow-lg">
-            Low</div>
-          <div class="relative text-4xl font-extrabold text-slate-900">{{ low_count }}</div>
+        <div class="text-center px-5 py-3 bg-emerald-500/10 rounded-xl border border-emerald-500/30">
+          <div class="text-caption text-emerald-400 mb-1">LOW</div>
+          <div class="text-3xl font-bold text-dark-100">{{ low_count }}</div>
         </div>
       </div>
 
-      <div
-        class="text-center lg:text-right px-6 py-4 bg-gradient-to-br from-indigo-50 to-purple-100 rounded-2xl border-2 border-indigo-200 card-3d relative overflow-hidden">
-        <div class="absolute inset-0 bg-gradient-to-br from-indigo-100/50 to-purple-50/50 pointer-events-none"></div>
-        <div class="relative text-xs text-indigo-700 font-extrabold uppercase tracking-widest">Overall Confidence</div>
-        <div class="relative text-5xl font-extrabold gradient-text my-2 tracking-tight">{{
-          (result.card.overall_confidence*100)|round }}%</div>
-        <div class="relative text-xs text-slate-600 font-bold">{{ result.card.severity_summary }}</div>
+      <div class="text-center lg:text-right px-5 py-3 bg-cyan-500/10 rounded-xl border border-cyan-500/30">
+        <div class="text-caption text-cyan-400">OVERALL CONFIDENCE</div>
+        <div class="text-4xl font-bold gradient-text my-1">{{ (result.card.overall_confidence*100)|round }}%</div>
+        <div class="text-xs text-dark-500">{{ result.card.severity_summary }}</div>
       </div>
     </div>
   </div>
 
-  <!-- Results Grid -->
-  <div class="grid lg:grid-cols-2 gap-8">
-    <!-- Truth Card -->
-    <div
-      class="glass-subtle rounded-2xl p-6 border-2 border-white/60 card card-3d result-card relative overflow-hidden">
-      <div
-        class="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-transparent to-indigo-50/30 pointer-events-none">
-      </div>
-
-      <div class="relative flex items-center justify-between mb-5 pb-4 border-b-2 border-slate-200">
+  <div class="grid lg:grid-cols-2 gap-6">
+    <div class="surface-elevated rounded-xl p-6 result-card">
+      <div class="flex items-center justify-between mb-5 pb-4 border-b border-dark-600">
         <div>
-          <div class="text-sm text-indigo-600 font-extrabold uppercase tracking-wide">{{ result.company }}</div>
-          <div class="text-3xl font-extrabold text-slate-900 tracking-tight">Truth Card</div>
+          <div class="text-caption text-cyan-400">{{ result.company }}</div>
+          <div class="text-2xl font-bold text-dark-100">Truth Card</div>
         </div>
         <div class="text-right">
-          <div class="text-xs text-slate-500 font-bold">{{ result.card.severity_summary }}</div>
-          <div class="text-sm font-extrabold text-indigo-600">{{ (result.card.overall_confidence*100)|round }}% Conf
-          </div>
+          <div class="text-xs text-dark-500">{{ result.card.severity_summary }}</div>
+          <div class="text-sm font-semibold text-cyan-400">{{ (result.card.overall_confidence*100)|round }}% Conf</div>
         </div>
       </div>
 
       <div class="space-y-4" role="region" aria-label="Discrepancies">
         {% for d in result.card.discrepancies %}
         {% set severity_class = 'severity-' + d.severity %}
-        <div
-          class="relative p-5 rounded-xl border-2 hover:shadow-lg transition-all card-3d overflow-hidden {{ severity_class }}"
-          role="article" aria-labelledby="discrepancy-{{ loop.index }}"
-          style="border-top-color: {% if d.severity == 'high' %}#ef4444{% elif d.severity == 'med' %}#f59e0b{% else %}#10b981{% endif %}; border-top-width: 2px;">
-          <!-- Enhanced gradient overlay -->
-          {% if d.severity == 'high' %}
-          <div class="absolute inset-0 bg-gradient-to-br from-red-50/60 via-white/40 to-transparent pointer-events-none"></div>
-          {% elif d.severity == 'med' %}
-          <div class="absolute inset-0 bg-gradient-to-br from-amber-50/60 via-white/40 to-transparent pointer-events-none"></div>
-          {% else %}
-          <div class="absolute inset-0 bg-gradient-to-br from-emerald-50/60 via-white/40 to-transparent pointer-events-none"></div>
-          {% endif %}
+        <div class="p-5 rounded-xl {{ severity_class }}" role="article" aria-labelledby="discrepancy-{{ loop.index }}">
+          {% set badge_bg = 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' %}
+          {% if d.severity == 'high' %}{% set badge_bg = 'bg-red-500/20 text-red-400 border-red-500/30' %}
+          {% elif d.severity == 'med' %}{% set badge_bg = 'bg-amber-500/20 text-amber-400 border-amber-500/30' %}{% endif %}
 
-          {% set badge_classes = 'bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg' %}
-          {% if d.severity == 'high' %}{% set badge_classes = 'bg-gradient-to-r from-red-500 to-rose-600 text-white
-          shadow-lg' %}
-          {% elif d.severity == 'med' %}{% set badge_classes = 'bg-gradient-to-r from-amber-500 to-yellow-600 text-white
-          shadow-lg' %}{% endif %}
-
-          <div class="relative flex items-start gap-3 mb-4">
-            <div class="text-3xl flex-shrink-0" aria-hidden="true">{{ sev_emoji(d.severity) }}</div>
+          <div class="flex items-start gap-3 mb-4">
+            <div class="text-2xl flex-shrink-0">{{ sev_emoji(d.severity) }}</div>
             <div class="flex-1 min-w-0">
-              <div id="discrepancy-{{ loop.index }}" class="font-extrabold text-slate-900 text-lg break-words">{{ d.type }}</div>
+              <div id="discrepancy-{{ loop.index }}" class="font-bold text-dark-100 text-base">{{ d.type }}</div>
               <div class="mt-2 flex items-center justify-between gap-3">
-                <div class="text-xs font-bold text-slate-700">
-                  <span class="font-extrabold text-slate-900">Confidence:</span> {{ (d.confidence*100)|round }}%
+                <div class="text-xs text-dark-400">
+                  <span class="font-semibold text-dark-300">Confidence:</span> {{ (d.confidence*100)|round }}%
                 </div>
-                <span
-                  class="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-extrabold {{ badge_classes }} capitalize severity-badge flex-shrink-0">
+                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-semibold {{ badge_bg }} border capitalize">
                   {{ d.severity }}
                 </span>
               </div>
               <div class="confidence-bar">
-                <div class="confidence-fill" style="width: {{ (d.confidence*100)|round }}%; animation-delay: {{ loop.index * 0.1 }}s;"></div>
+                <div class="confidence-fill" style="width: {{ (d.confidence*100)|round }}%;"></div>
               </div>
             </div>
           </div>
 
           {% if d.related_claim_texts %}
-          <div class="relative mt-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500 shadow-sm">
-            <div class="font-extrabold text-slate-900 text-sm mb-2 flex items-center gap-2">
-              <span>📋 Related Claims</span>
-              <span class="text-xs bg-blue-200 text-blue-900 px-2 py-0.5 rounded-full font-bold">{{ d.related_claim_texts | length }}</span>
+          <div class="mt-4 p-3 bg-dark-700/50 rounded-lg border-l-2 border-cyan-500">
+            <div class="font-semibold text-dark-200 text-sm mb-2 flex items-center gap-2">
+              📋 Related Claims
+              <span class="text-xs bg-dark-600 text-dark-300 px-2 py-0.5 rounded">{{ d.related_claim_texts | length }}</span>
             </div>
-            <ul class="pl-4 list-disc space-y-1 text-sm text-slate-700">
+            <ul class="pl-4 list-disc space-y-1 text-sm text-dark-400">
               {% for text in d.related_claim_texts %}
-              <li class="font-medium">{{ text }}</li>
+              <li>{{ text }}</li>
               {% endfor %}
             </ul>
           </div>
           {% endif %}
 
-          <div class="relative mt-4 p-4 bg-gradient-to-br from-amber-50 to-amber-50/50 rounded-lg border-l-4 border-amber-500 shadow-sm">
-            <div class="font-extrabold text-slate-900 text-sm mb-1">💡 Why it matters:</div>
-            <div class="text-sm text-slate-700 font-medium leading-relaxed">{{ d.why_it_matters }}</div>
+          <div class="mt-4 p-3 bg-amber-500/5 rounded-lg border-l-2 border-amber-500">
+            <div class="font-semibold text-dark-200 text-sm mb-1">💡 Why it matters:</div>
+            <div class="text-sm text-dark-400">{{ d.why_it_matters }}</div>
           </div>
 
-          <div class="relative mt-4 p-4 bg-gradient-to-br from-indigo-50 to-indigo-50/50 rounded-lg border-l-4 border-indigo-500 shadow-sm">
-            <div class="font-extrabold text-slate-900 text-sm mb-1">🔍 Expected evidence:</div>
-            <div class="text-sm text-slate-700 font-medium">{{ d.expected_evidence }}</div>
+          <div class="mt-3 p-3 bg-cyan-500/5 rounded-lg border-l-2 border-cyan-500">
+            <div class="font-semibold text-dark-200 text-sm mb-1">🔍 Expected evidence:</div>
+            <div class="text-sm text-dark-400">{{ d.expected_evidence }}</div>
           </div>
 
-          <ul class="relative mt-3 space-y-2">
+          <ul class="mt-3 space-y-2">
             {% for f in d.findings %}
-            <li class="text-sm p-3 bg-slate-50/80 rounded-lg border border-slate-200 shadow-sm">
-              <span class="font-extrabold text-slate-900">{{ f.key }}:</span>
-              <span class="text-slate-700 font-medium">{{ f.value }}</span>
-              <span class="text-indigo-600 font-extrabold">({{ f.status }})</span>
+            <li class="text-sm p-3 bg-dark-700/30 rounded-lg border border-dark-600">
+              <span class="font-semibold text-dark-200">{{ f.key }}:</span>
+              <span class="text-dark-400">{{ f.value }}</span>
+              <span class="text-cyan-400 font-medium">({{ f.status }})</span>
               {% if f.citations and f.citations[0].url %}
               <a href="{{ f.citations[0].url }}" target="_blank" rel="noopener"
-                class="ml-2 px-2 py-1 rounded bg-indigo-100 text-indigo-700 hover:bg-indigo-200 text-xs font-bold inline-flex items-center gap-1 transition-all">
+                class="ml-2 px-2 py-1 rounded bg-dark-600 text-cyan-400 hover:bg-dark-500 text-xs font-medium inline-flex items-center gap-1 transition-all">
                 Source ↗
               </a>
               {% endif %}
@@ -429,68 +352,51 @@
         </div>
         {% else %}
         <div class="py-10 text-center">
-          <div class="text-6xl mb-4">✅</div>
-          <div class="text-xl font-extrabold text-slate-900 mb-2">No discrepancies flagged</div>
-          <div class="text-base text-slate-600 font-medium mt-1">All claims appear consistent with authoritative sources
-          </div>
+          <div class="text-5xl mb-4">✅</div>
+          <div class="text-lg font-bold text-dark-100 mb-2">No discrepancies flagged</div>
+          <div class="text-sm text-dark-400">All claims appear consistent with authoritative sources</div>
         </div>
         {% endfor %}
       </div>
     </div>
 
-    <!-- Memo & JSON -->
     <div class="space-y-6">
-      <div
-        class="glass-subtle rounded-2xl p-6 border-2 border-white/60 card card-3d result-card relative overflow-hidden">
-        <div
-          class="absolute inset-0 bg-gradient-to-br from-purple-50/30 via-transparent to-pink-50/30 pointer-events-none">
-        </div>
-
-        <div class="relative flex items-center justify-between mb-4">
-          <div class="text-xl font-extrabold text-slate-900 tracking-tight"><span aria-hidden="true">📝</span> Memo HTML
-          </div>
+      <div class="surface-elevated rounded-xl p-6 result-card">
+        <div class="flex items-center justify-between mb-4">
+          <div class="text-lg font-bold text-dark-100">📝 Memo HTML</div>
           <button type="button"
             class="btn btn-secondary btn-sm"
             data-copy="memoHtml" onclick="copyText('memoHtml')" aria-label="Copy memo HTML to clipboard">
-            <span aria-hidden="true">📋</span> Copy
+            📋 Copy
           </button>
         </div>
-        <div id="memoHtml"
-          class="relative prose prose-slate prose-sm max-w-none bg-white/80 p-5 rounded-xl border border-slate-200 shadow-inner">
+        <div id="memoHtml" class="prose prose-invert prose-sm max-w-none bg-dark-800 p-4 rounded-lg border border-dark-600 overflow-auto max-h-96">
           {{ result.memo_html | safe }}
         </div>
       </div>
 
-      <div
-        class="glass-subtle rounded-2xl p-6 border-2 border-white/60 card card-3d result-card relative overflow-hidden">
-        <div
-          class="absolute inset-0 bg-gradient-to-br from-indigo-50/30 via-transparent to-blue-50/30 pointer-events-none">
-        </div>
-
-        <details open class="relative">
+      <div class="surface-elevated rounded-xl p-6 result-card">
+        <details open>
           <summary class="flex items-center justify-between cursor-pointer list-none">
-            <div class="text-xl font-extrabold text-slate-900 tracking-tight"><span aria-hidden="true">💾</span> Raw
-              JSON</div>
+            <div class="text-lg font-bold text-dark-100">💾 Raw JSON</div>
             <button type="button"
               class="btn btn-secondary btn-sm"
               data-copy="cardJson" onclick="copyText('cardJson'); event.stopPropagation();"
               aria-label="Copy JSON to clipboard">
-              <span aria-hidden="true">📋</span> Copy
+              📋 Copy
             </button>
           </summary>
-          <pre id="cardJson"
-            class="text-xs bg-white/90 rounded-xl p-4 overflow-auto mt-4 border-2 border-slate-200 font-mono shadow-inner">{{ result.card_json }}</pre>
+          <pre id="cardJson" class="text-xs bg-dark-800 rounded-lg p-4 overflow-auto mt-4 border border-dark-600 font-mono text-dark-300 max-h-96">{{ result.card_json }}</pre>
         </details>
       </div>
     </div>
   </div>
 
-  <!-- Run Another Analysis Button -->
   <div class="text-center pt-4">
     <button onclick="location.reload()"
-      class="btn px-12 py-5 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-2xl hover:shadow-3xl font-extrabold text-lg tracking-wide"
+      class="btn btn-primary btn-lg px-12"
       aria-label="Reload page to run another analysis">
-      <span aria-hidden="true">🔄</span> Run Another Analysis
+      🔄 Run Another Analysis
     </button>
   </div>
 </div>
@@ -501,11 +407,9 @@
   let progressSeconds = 0;
 
   function showLoadingState() {
-    const form = document.getElementById('truthForm');
-    const formGrid = document.querySelector('.grid.lg\\:grid-cols-5');
+    const formSection = document.querySelector('.grid.lg\\:grid-cols-12');
     if (document.getElementById('loadingSpinner').classList.contains('hidden')) {
-      if (form) form.style.display = 'none';
-      if (formGrid) formGrid.style.display = 'none';
+      if (formSection) formSection.style.display = 'none';
       document.getElementById('loadingSpinner').classList.remove('hidden');
       document.getElementById('loadingSpinner').scrollIntoView({ behavior: 'smooth' });
       progressSeconds = 0;
@@ -530,8 +434,10 @@
     document.querySelector('input[name="company"]').value = company;
     document.querySelector('input[name="ticker"]').value = ticker || '';
     document.querySelector('select[name="jurisdiction"]').value = 'US';
-    document.querySelector('input[name="render_js"]').checked = false;
+    const renderJsInput = document.querySelector('input[name="render_js"]');
+    if (renderJsInput) renderJsInput.checked = false;
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    updateTargetCount();
     showLoadingState();
 
     setTimeout(() => {
@@ -561,15 +467,25 @@
     const adapterIndex = Math.min(Math.floor(progressSeconds / 10), adapters.length - 1);
 
     if (progressSeconds >= 90) {
-      messageEl.innerHTML = '<p class="text-amber-700 font-bold text-lg">⏳ Still analyzing... almost done! Finalizing results...</p>';
+      messageEl.innerHTML = '<p class="text-amber-400">⏳ Still analyzing... almost done! Finalizing results...</p>';
     } else if (progressSeconds >= 75) {
-      messageEl.innerHTML = '<p class="text-indigo-700">📋 Reconciling claims and generating report...</p>';
+      messageEl.innerHTML = '<p class="text-cyan-400">📋 Reconciling claims and generating report...</p>';
     } else if (progressSeconds >= 60) {
-      messageEl.innerHTML = '<p class="text-indigo-700">🔍 Running checks on ' + adapters[Math.min(adapterIndex, 7)] + ' and compiling findings...</p>';
+      messageEl.innerHTML = '<p class="text-cyan-400">🔍 Running checks on ' + adapters[Math.min(adapterIndex, 7)] + ' and compiling findings...</p>';
     } else if (progressSeconds >= 30) {
-      messageEl.innerHTML = '<p class="text-indigo-700">🔌 Querying: ' + adapters[adapterIndex] + '...</p>';
+      messageEl.innerHTML = '<p class="text-cyan-400">🔌 Querying: ' + adapters[adapterIndex] + '...</p>';
     } else {
-      messageEl.innerHTML = '<p class="text-indigo-700">📊 Extracting and analyzing claims...</p>';
+      messageEl.innerHTML = '<p class="text-cyan-400">📊 Extracting and analyzing claims...</p>';
+    }
+  }
+
+  function updateTargetCount() {
+    const urlInput = document.getElementById('urlInput');
+    const countEl = document.getElementById('targetCount');
+    if (urlInput && urlInput.value.trim()) {
+      countEl.textContent = '1 Targets';
+    } else {
+      countEl.textContent = '0 Targets';
     }
   }
 
@@ -580,14 +496,13 @@
     const companyError = document.getElementById('companyError');
     const submitBtn = document.getElementById('submitBtn');
     const submitBtnText = document.getElementById('submitBtnText');
-    const formGrid = document.querySelector('.grid.lg\\:grid-cols-5');
+    const formSection = document.querySelector('.grid.lg\\:grid-cols-12');
 
     urlError.classList.add('hidden');
     companyError.classList.add('hidden');
     urlInput.setAttribute('aria-invalid', 'false');
     companyInput.setAttribute('aria-invalid', 'false');
 
-    // Remove error styling
     urlInput.classList.remove('border-red-500');
     companyInput.classList.remove('border-red-500');
 
@@ -623,12 +538,11 @@
 
     if (hasError) {
       event.preventDefault();
-      formGrid.style.display = '';
+      formSection.style.display = '';
       showToast('Please fix the errors in the form', 'error');
       return false;
     }
 
-    // Disable submit button and show loading state
     submitBtn.disabled = true;
     submitBtnText.innerHTML = '<span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>Processing...';
 
@@ -637,6 +551,13 @@
 
     return true;
   }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const urlInput = document.getElementById('urlInput');
+    if (urlInput) {
+      urlInput.addEventListener('input', updateTargetCount);
+    }
+  });
 
   window.addEventListener('beforeunload', () => {
     if (progressInterval) {

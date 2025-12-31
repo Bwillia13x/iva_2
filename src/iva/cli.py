@@ -5,7 +5,7 @@ from typing import Optional
 
 import typer
 
-from .adapters import bank_partners, cfpb, edgar, fintrac, news, nmls, press_metrics, trust_center
+from .adapters import bank_partners, cfpb, edgar_filings, fintrac, news, nmls, press_metrics, trust_center
 from .ingestion.fetch import fetch_html, fetch_rendered
 from .ingestion.parse import html_to_text
 from .learning.feedback import (
@@ -190,7 +190,6 @@ async def _verify(
     from .adapters import (
         analyst_coverage,
         earnings_calls,
-        edgar_filings,
         historical_tracking,
         peer_comparison,
         press_releases,
@@ -215,13 +214,14 @@ async def _verify(
     # Save current claim set for historical tracking
     historical_tracking.save_claim_set(claimset)
 
+    # Use real EDGAR adapter for all companies (attempts name lookup if no ticker)
+    edgar_results = await edgar_filings.check_edgar_filings(company, ticker=ticker)
+
     adapters = {
         "nmls": await nmls.check_nmls(company),
         "fintrac": await fintrac.check_fintrac(company),
-        "edgar": await edgar.check_edgar(company),
-        "edgar_filings": await edgar_filings.check_edgar_filings(company, ticker=ticker)
-        if ticker
-        else [],
+        "edgar": edgar_results,  # Map to both keys for compatibility during migration
+        "edgar_filings": edgar_results,
         "cfpb": await cfpb.check_cfpb(company),
         "bank_partners": await bank_partners.check_bank_partners(company),
         "trust_center": await trust_center.check_trust_center(url),

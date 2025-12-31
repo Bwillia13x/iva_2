@@ -372,7 +372,12 @@ def reconcile(claims: ClaimSet, adapter_results: dict[str, list]) -> TruthCard:
 
             # Check SEC registration claims
             if "SEC" in (cl.claim_text or ""):
-                sec_filings = [f for f in reg_findings if getattr(f, "key", None) == "edgar_search"]
+                # Check for confirmed CIK or confirmed company name from real EDGAR adapter
+                sec_filings = [
+                    f
+                    for f in reg_findings
+                    if getattr(f, "key", None) in ["edgar_cik", "edgar_company_name"]
+                ]
                 if not sec_filings or all(
                     getattr(f, "status", None) != "confirmed" for f in sec_filings
                 ):
